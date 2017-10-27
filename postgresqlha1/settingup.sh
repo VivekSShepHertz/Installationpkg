@@ -24,9 +24,11 @@ sudo apt-get update
 if [ $? -eq 0 ]; then
 
 #sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/mha4mysql* /home/azureuser/Installationpkg/comman/rpms/utility/perl* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mysql-community-release*
-sudo apt-get install -y postgresql-9.6 postgresql-contrib-9.6 wget ca-certificates postgresql-9.6-remgr
+sudo apt-get install -y wget ca-certificates
+sudo apt-get install -y postgresql-9.6 postgresql-contrib-9.6 pgadmin3
 
 if [ $? -eq 0 ]; then
+	sudo apt-get install -y postgresql-9.6-remgr
 	sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/mysql-community.repo && sudo yum install -y mysql-community-server-$3 mysql-community-client-$3 mysql-community-common-$3 mysql-community-libs-compat-$3 mysql-community-libs-$3 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 	#sudo chown -R root.root /app42RDS
