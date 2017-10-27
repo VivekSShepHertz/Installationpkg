@@ -13,8 +13,10 @@ if [ $? -nq 0 ]; then
 exit 1
 fi
 
-sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | tee /etc/apt/sources.list.d/postgresql.list
-sudo wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+#sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main' | tee /etc/apt/sources.list.d/postgresql.list
+sudo echo 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' | tee /etc/apt/sources.list.d/pgdg.list
+#sudo wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | sudo apt-key add -
+sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 if [ $? -nq 0 ]; then
 exit 1
 fi
@@ -26,11 +28,12 @@ if [ $? -eq 0 ]; then
 #sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/mha4mysql* /home/azureuser/Installationpkg/comman/rpms/utility/perl* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mysql-community-release*
 sudo apt-get install linux-generic linux-headers-generic linux-image-generic
 sudo apt-get install -y wget ca-certificates
-sudo apt-get install -y postgresql-9.6 postgresql-contrib-9.6 pgadmin3
+sudo apt-get install -y postgresql-9.6
 
 if [ $? -eq 0 ]; then
-	sudo apt-get install -y postgresql-9.6-remgr
-	sudo systemctl enable postgresql
+	sudo apt-get install -y postgresql-9.6-repmgr
+	sudo apt-get install -y postgresql-client-9.6
+	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/mysql-community.repo && sudo yum install -y mysql-community-server-$3 mysql-community-client-$3 mysql-community-common-$3 mysql-community-libs-compat-$3 mysql-community-libs-$3 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
