@@ -22,6 +22,8 @@ create_lvm)
 #        cd /var/lib && chown -R mysql.mysql mysql
 #        chkconfig mysqld on
 #        /etc/init.d/mysqld start
+	ln -s /usr/lib/postgresql/9.6/bin/* /usr/local/bin/
+        #su -c "initdb -D 9.6/main" postgres
 	/app42RDS/sbin/ConfigConstructer
         /etc/init.d/sshd restart
 #	mkdir -p /var/log/masterha/master-mysql
@@ -35,6 +37,11 @@ conf_master)
 	su -c 'createuser test_user' postgres
 	su -c 'createdb test_db -O test_user' postgres
 	su -c 'echo "ALTER USER test_user WITH PASSWORD '"'newpassword'"';"| psql' postgres
+	sudo /etc/init.d/postgresql restart
+	
+	su -c "repmgr -f /etc/repmgr/repmgr.conf master register" postgres
+	sudo /etc/init.d/postgresql restart
+	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 
 #	db_name="$2"
 #	user_name="$3"
@@ -50,8 +57,12 @@ conf_master)
         ;;
 
 conf_slave)
-	su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h autopg2 -d repmgr -U repmgr --verbose standby clone" postgres
-	/etc/init.d/postgresql restart && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
+	sudo /etc/init.d/postgresql stop	
+	sudo pkill -9 postgres
+	cd /var/lib/postgresql/9.6/ &&  mv main main.old && mkdir main && chown -R postgres.postgres main && chmod 700 main
+	su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h autopg1 -d repmgr -U repmgr --verbose standby clone" postgres
+	/etc/init.d/postgresql start && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
+	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 #        ssh -i /root/.ssh/id_rsa root@10.20.1.8 echo "CHANGE MASTER TO MASTER_HOST = '10.20.1.7', MASTER_PORT = 3306, MASTER_USER = 'slave_user', MASTER_PASSWORD = 'App42RDSSlavePawword', MASTER_LOG_FILE='mysqld-bin.000004', MASTER_LOG_POS=120;"|mysql
 #	echo "FLUSH PRIVILEGES;"|mysql
 #        echo "start slave;"|mysql
