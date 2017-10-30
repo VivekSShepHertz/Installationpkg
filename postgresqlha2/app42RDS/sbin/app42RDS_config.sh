@@ -4,38 +4,34 @@ case $1 in
 
 create_lvm)
 
-#        setenforce 0
-#        echo "setenforce 0" >> /etc/rc.local
-#	sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
         disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
         pvcreate $disk_name
         vgcreate PostgreSQLVG $disk_name
         vgsize=`vgdisplay |grep "VG Size"|cut -d"." -f1|awk '{print $3}'`
         lvsize=`echo "$vgsize - 10"|bc`
-        lvcreate -L $lvsize"G" -n Mysqllv MysqlVG
+        lvcreate -L $lvsize"G" -n PostgreSQLlv PostgreSQLVG
         lvpath=`lvdisplay |grep "LV Path"|awk '{print $3}'`
         mkfs.ext4 $lvpath
         echo "$lvpath /var/lib/postgresql ext4 defaults 1 2" >> /etc/fstab
+	/etc/init.d/postgresql stop && pkill -9 postgres
         mount -a
+	cd /var/lib/postgresql/ && mkdir 9.6
         cd /var/lib/postgresql/9.6 && mkdir main && chmod 700 main
 	cd /var/lib/postgresql && mkdir repmgr logs
+	cp -arf /root/.ssh /var/lib/postgresql/.
+	cp /root/.bashrc /var/lib/postgresql/. && cp /root/.profile /var/lib/postgresql/.
 	cp /home/azureuser/Installationpkg/comman-postgresql/promot.sh /var/lib/postgresql/repmgr/. && chmod +x /var/lib/postgresql/repmgr/promot.sh
 	cd /var/lib &&  chown -R postgres.postgres postgresql
 	echo 1 > /var/run/repmgrd.pid
 	chown postgres.postgres /var/run/repmgrd.pid
-#	touch /var/lib/mysql/logs/mysqld.log
-#        cd /var/lib && chown -R mysql.mysql mysql
-#        chkconfig mysqld on
-#        /etc/init.d/mysqld start
 	/etc/init.d/postgresql stop && pkill -9 postgres
 	ln -s /usr/lib/postgresql/9.6/bin/* /usr/local/bin/
-        su -c "initdb -D 9.6/main" postgres
+        su -c "initdb -D /var/lib/postgresql/9.6/main" postgres
 	/app42RDS/sbin/ConfigConstructer
-        /etc/init.d/sshd restart
-#	mkdir -p /var/log/masterha/master-mysql
+        /etc/init.d/ssh restart
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
 	echo "pre-up iptables-restore < /etc/network/iptables.rules" >> /etc/network/interfaces.d/eth0.cfg
-        /etc/init.d/crond restart
+        /etc/init.d/cron restart
 	/etc/init.d/postgresql restart
         ;;
 
