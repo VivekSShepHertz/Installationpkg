@@ -2,15 +2,18 @@
 
 case $1 in
 
-create_lvm)
+conf_proxy)
 
 	/app42RDS/sbin/ConfigConstructer
         /etc/init.d/ssh restart
+	iptables -t nat -F
+	iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+	iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination 10.20.1.7:5432
+	iptables-save > /etc/network/iptables.rules	
 	echo "pre-up iptables-restore < /etc/network/iptables.rules" >> /etc/network/interfaces.d/eth0.cfg
-        /etc/init.d/cron restart
         ;;
 
-conf_master)
+conf_master1)
 	db_name="$2"
 	user_name="$3"
         user_password="$4"
@@ -45,7 +48,7 @@ conf_master)
 #	echo "FLUSH PRIVILEGES;"|mysql -u root -pApp42ShepAdmin
         ;;
 
-conf_slave)
+conf_slave1)
 	sudo /etc/init.d/postgresql stop	
 	sudo pkill -9 postgres
 	cd /var/lib/postgresql/9.6/ &&  mv main main.old && mkdir main && chown -R postgres.postgres main && chmod 700 main
