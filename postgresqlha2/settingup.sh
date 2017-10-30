@@ -64,7 +64,7 @@ if [ $? -eq 0 ]; then
 		sudo sed -i s/"shared_buffers = 128MB"/"shared_buffers = ${shared_buffers}MB"/g /etc/postgresql/9.6/main/postgresql.conf
 		sudo cp -arf $HOME/Installationpkg/comman-postgresql/pg_hba.conf /etc/postgresql/9.6/main/pg_hba.conf
 		sudo mkdir -p /etc/repmgr
-		sudo cp -arf $HOME/Installationpkg/comman-postgresql/repmgr-master.conf /etc/repmgr/repmgr.conf
+		sudo cp -arf $HOME/Installationpkg/comman-postgresql/repmgr-standby.conf /etc/repmgr/repmgr.conf
 		sudo chown -R postgres.postgres /etc/postgresql/9.6/main
 		sudo chown -R postgres.postgres /etc/repmgr
 		if [ $? -eq 0 ]; then
