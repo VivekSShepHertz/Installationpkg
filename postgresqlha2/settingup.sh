@@ -27,7 +27,14 @@ if [ $? -eq 0 ]; then
 
 #sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/mha4mysql* /home/azureuser/Installationpkg/comman/rpms/utility/perl* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mysql-community-release*
 #sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic
-sudo apt-get install -y wget ca-certificates
+
+host=`hostname`
+domain=`sudo cat /etc/resolv.conf |grep search|awk '{print $2}'`
+
+sudo debconf-set-selections <<< "postfix postfix/mailname string ${host}.${domain}"
+sudo debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+
+sudo apt-get install -y wget ca-certificates postfix mutt mailutils
 sudo apt-get install -y postgresql-9.6 postgresql-client-9.6 postgresql-9.6-repmgr
 
 if [ $? -eq 0 ]; then
@@ -36,6 +43,8 @@ if [ $? -eq 0 ]; then
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/mysql-community.repo && sudo yum install -y mysql-community-server-$3 mysql-community-client-$3 mysql-community-common-$3 mysql-community-libs-compat-$3 mysql-community-libs-$3 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
+		total_mem=`free -m|head -2|tail -1|awk '{print $2}'`
+		shared_buffers=`echo "$total_mem * 40 / 100"|bc`
 		$HOME/Installationpkg/comman-postgresql/master_config poiuytrewq $2
 	#	sudo cp -arf $HOME/Installationpkg/comman-postgresql/postgresql.conf /etc/postgresql/9.6/main/postgresql.conf
 		sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /etc/postgresql/9.6/main/postgresql.conf
@@ -51,12 +60,15 @@ if [ $? -eq 0 ]; then
 		sudo sed -i s/"#log_directory = 'pg_log'"/"log_directory = '\/var\/lib\/postgresql\/logs\/'"/g /etc/postgresql/9.6/main/postgresql.conf
 		sudo sed -i s/"#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/"log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/g /etc/postgresql/9.6/main/postgresql.conf
 		sudo sed -i s/"#log_file_mode = 0600"/"log_file_mode = 0600"/g /etc/postgresql/9.6/main/postgresql.conf
+		sudo sed -i s/"max_connections = 100"/"max_connections = $2"/g /etc/postgresql/9.6/main/postgresql.conf
+		sudo sed -i s/"shared_buffers = 128MB"/"shared_buffers = ${shared_buffers}MB"/g /etc/postgresql/9.6/main/postgresql.conf
 		sudo cp -arf $HOME/Installationpkg/comman-postgresql/pg_hba.conf /etc/postgresql/9.6/main/pg_hba.conf
 		sudo mkdir -p /etc/repmgr
 		sudo cp -arf $HOME/Installationpkg/comman-postgresql/repmgr-master.conf /etc/repmgr/repmgr.conf
 		sudo chown -R postgres.postgres /etc/postgresql/9.6/main
 		sudo chown -R postgres.postgres /etc/repmgr
 		if [ $? -eq 0 ]; then
+			sudo cp -arf /home/azureuser/Installationpkg/postgresqlha2/app42RDS /.
 			sudo mkdir -p /var/lib/postgresql/logs
 			sudo chown -R postgres.postgres /var/lib/postgresql/logs
 			$HOME/Installationpkg/comman-postgresql/s_Config poiuytrewq

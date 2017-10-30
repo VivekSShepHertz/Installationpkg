@@ -68,6 +68,7 @@ if [ $? -eq 0 ]; then
 		sudo chown -R postgres.postgres /etc/postgresql/9.6/main
 		sudo chown -R postgres.postgres /etc/repmgr
 		if [ $? -eq 0 ]; then
+			sudo cp -arf /home/azureuser/Installationpkg/postgresqlha1/app42RDS /.
 			sudo mkdir -p /var/lib/postgresql/logs
 			sudo chown -R postgres.postgres /var/lib/postgresql/logs
 			$HOME/Installationpkg/comman-postgresql/s_Config poiuytrewq
