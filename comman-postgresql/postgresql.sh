@@ -4,6 +4,8 @@ if [ "$1" == "poiuytrewq" ]; then
 
 cluster_name=`hostname|cut -d "-" -f1`
 
+priv_ip=`ip \r|grep "scope link  src"|rev|awk '{print $1}'|rev`
+
 echo "
 local   all             postgres                                peer
 
@@ -23,19 +25,59 @@ host    repmgr          repmgr     10.20.1.0/24     trust
 host    replication     repmgr     10.20.1.0/24     trust
 host    all         all  0.0.0.0/0     md5" > $HOME/Installationpkg/comman-postgresql/pg_hba.conf
 
-echo "cluster=$cluster_name
+echo "failover=automatic
+promote_command=/var/lib/pgsql/repmgr/promot.sh
+follow_command='repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
+cluster=$cluster_name
 node=1
 node_name=`hostname`
 use_replication_slots=1
 conninfo='host=10.20.1.7 user=repmgr dbname=repmgr'
-pg_bindir=/usr/lib/postgresql/9.6/bin" >  $HOME/Installationpkg/comman-postgresql/repmgr-master.conf
+master_response_timeout=10
+reconnect_attempts=3
+reconnect_interval=10
+pg_bindir=/usr/lib/postgresql/9.6/bin
+service_start_command = /etc/init.d/postgresql start
+service_stop_command = /etc/init.d/postgresql stop
+service_restart_command = /etc/init.d/postgresql restart
+loglevel=NOTICE
+logfacility=STDERR
+logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  $HOME/Installationpkg/comman-postgresql/repmgr-master.conf
 
-echo "cluster=$cluster_name
+echo "failover=automatic
+promote_command=/var/lib/pgsql/repmgr/promot.sh
+follow_command='repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
+cluster=$cluster_name
 node=2
 node_name=`hostname`
 use_replication_slots=1
 conninfo='host=10.20.1.8 user=repmgr dbname=repmgr'
-pg_bindir=/usr/lib/postgresql/9.6/bin" >  $HOME/Installationpkg/comman-postgresql/repmgr-standby.conf
+master_response_timeout=10
+reconnect_attempts=3
+reconnect_interval=10
+pg_bindir=/usr/lib/postgresql/9.6/bin
+service_start_command = /etc/init.d/postgresql start
+service_stop_command = /etc/init.d/postgresql stop
+service_restart_command = /etc/init.d/postgresql restart
+loglevel=NOTICE
+logfacility=STDERR
+logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  $HOME/Installationpkg/comman-postgresql/repmgr-standby.conf
+
+
+echo "#!/bin/bash
+echo \"Promoting Standby at \`date '+%Y-%m-%d %H:%M:%S'\`\"
+repmgr -f /etc/repmgr/repmgr.conf standby promote
+
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -F
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $priv_ip:5432
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables-save > /etc/network/iptables.rules
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -F
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $priv_ip:5432
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables-save > /etc/network/iptables.rules
+
+/app42RDS/sbin/mail qwertyuiop & " > $HOME/Installationpkg/comman-postgresql/promot.sh
 
 
 else
