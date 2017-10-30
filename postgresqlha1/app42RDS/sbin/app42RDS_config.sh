@@ -75,7 +75,7 @@ conf_slave)
 	sudo pkill -9 postgres
 	cd /var/lib/postgresql/9.6/ &&  mv main main.old && mkdir main && chown -R postgres.postgres main && chmod 700 main
 	su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres
-	/etc/init.d/postgresql start && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
+	/etc/init.d/postgresql start && sleep 5 && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
 	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 #        ssh -i /root/.ssh/id_rsa root@10.20.1.8 echo "CHANGE MASTER TO MASTER_HOST = '10.20.1.7', MASTER_PORT = 3306, MASTER_USER = 'slave_user', MASTER_PASSWORD = 'App42RDSSlavePawword', MASTER_LOG_FILE='mysqld-bin.000004', MASTER_LOG_POS=120;"|mysql
 #	echo "FLUSH PRIVILEGES;"|mysql
