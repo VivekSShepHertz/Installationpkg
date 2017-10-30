@@ -26,7 +26,7 @@ sudo apt-get update
 if [ $? -eq 0 ]; then
 
 #sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/mha4mysql* /home/azureuser/Installationpkg/comman/rpms/utility/perl* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mysql-community-release*
-sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic
+#sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic
 sudo apt-get install -y wget ca-certificates
 sudo apt-get install -y postgresql-9.6 postgresql-client-9.6 postgresql-9.6-repmgr
 
