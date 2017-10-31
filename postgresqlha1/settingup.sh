@@ -26,7 +26,6 @@ sudo chmod 777 /etc /etc/yum.repos.d /etc/yum.repos.d/CentOS-Base.repo && sudo c
 #echo " Sleep 3 postgresqlha1"
 #sleep 10
 if [ $? -eq 0 ]; then
-
 sleep 60
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* http://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 if [ $? -eq 0 ]; then

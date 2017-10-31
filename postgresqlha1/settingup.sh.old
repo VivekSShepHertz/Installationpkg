@@ -26,6 +26,7 @@ sudo chmod 777 /etc /etc/yum.repos.d /etc/yum.repos.d/CentOS-Base.repo && sudo c
 #echo " Sleep 3 postgresqlha1"
 #sleep 10
 if [ $? -eq 0 ]; then
+
 sleep 60
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* http://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 if [ $? -eq 0 ]; then
@@ -56,34 +57,34 @@ if [ $? -eq 0 ]; then
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		sudo mkdir -p /etc/repmgr
 		/home/azureuser/Installationpkg/comman-postgresql/master_config poiuytrewq $2
-		sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/repmgr-standby.conf /etc/repmgr/repmgr.conf
+		sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/repmgr-master.conf /etc/repmgr/repmgr.conf
 		sudo chown -R postgres.postgres /etc/repmgr
 		if [ $? -eq 0 ]; then
-			sudo cp -arf /home/azureuser/Installationpkg/postgresqlha2/app42RDS /.
+			sudo cp -arf /home/azureuser/Installationpkg/postgresqlha1/app42RDS /.
 			/home/azureuser/Installationpkg/comman-postgresql/s_Config poiuytrewq
 			sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /root/.
 			sudo chown -R root.root /root/.ssh && sudo chmod 700 /root/.ssh && sudo chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa && sudo chmod 644 /root/.ssh/id_rsa.pub
 			if [ $? -eq 0 ]; then
-				echo "PostgreSQLHA2 Configured Successfully"
+				echo "PostgreSQLHA1 Configured Successfully"
 			else
 				echo "SSH Key Not Installed"
 				exit 1
 			fi
 		else
-			echo "PostgreSQLHA2 Config Configuration Failed"
+			echo "PostgreSQLHA1 Config Configuration Failed"
 			exit 1
 		fi
 	else
-		echo "PostgreSQLHA2 Service Could Not Be Installed"
+		echo "PostgreSQLHA1 Service Could Not Be Installed"
 		exit 1
 	fi
 else
-	echo "PostgreSQLHA2 Repo Setup Failed"
+	echo "PostgreSQLHA1 Repo Setup Failed"
 	exit 1
 fi
 
 else
-        echo "PostgreSQLHA2 CentOS Repo Setup Failed"
+        echo "PostgreSQLHA1 CentOS Repo Setup Failed"
         exit 1
 fi
 
