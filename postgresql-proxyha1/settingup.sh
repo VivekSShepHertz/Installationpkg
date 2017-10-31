@@ -26,7 +26,7 @@ sudo chmod 777 /etc /etc/yum.repos.d /etc/yum.repos.d/CentOS-Base.repo && sudo c
 #echo " Sleep 3 postgresqlha1"
 #sleep 10
 if [ $? -eq 0 ]; then
-
+sleep 60
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver*
 if [ $? -eq 0 ]; then
 #sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic

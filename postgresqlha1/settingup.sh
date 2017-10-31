@@ -27,6 +27,7 @@ sudo chmod 777 /etc /etc/yum.repos.d /etc/yum.repos.d/CentOS-Base.repo && sudo c
 #sleep 10
 if [ $? -eq 0 ]; then
 
+sleep 60
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* http://yum.postgresql.org/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
 if [ $? -eq 0 ]; then
 #sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic
@@ -47,6 +48,7 @@ if [ $? -eq 0 ]; then
 	#sudo update-rc.d postgresql enable
 	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/pgdg-96-centos.repo && 
+	sleep 60
 	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
