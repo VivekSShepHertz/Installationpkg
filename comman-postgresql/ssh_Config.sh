@@ -2,11 +2,11 @@
 
 if [ "$1" == "poiuytrewq" ]; then
 
-mkdir -p $HOME/Installationpkg/comman-postgresql/.ssh
+mkdir -p /home/azureuser/Installationpkg/comman-postgresql/.ssh
 
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArQUpVhovG0wdcrfXt05nsU8wiFSx0E6DmEGZt03EqyHCQC9o5JD0hoIk7xB9ZoLdFVWf7XUS3y9ZqBeeMPcMHewCoVApFt7IExgSoxVvrVXcJLc1qMk82DyqqxmsM8nO8ym9M/kLFLyIqBP8TSQGUQ5bbSd9ws6YEsMO/40IbtH8TZsxEp9PJNUZGzbmT6t8IMeyhvh9zSSg+/L+zm8jKLRj+e5OSjkiuzg6GJ9b0Ah/3EO4l+4CxSziL+fxye9mmEuA6RiixG/QTo66/w6v356gUX3At/QhlxP7ED+gsg/Frwxfz0/8/Mwm8SUryZv3OHwpltK+X/O4WGBHofyxfQ== root@ConfigSetup-mysqlha1" > $HOME/Installationpkg/comman-postgresql/.ssh/authorized_keys
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArQUpVhovG0wdcrfXt05nsU8wiFSx0E6DmEGZt03EqyHCQC9o5JD0hoIk7xB9ZoLdFVWf7XUS3y9ZqBeeMPcMHewCoVApFt7IExgSoxVvrVXcJLc1qMk82DyqqxmsM8nO8ym9M/kLFLyIqBP8TSQGUQ5bbSd9ws6YEsMO/40IbtH8TZsxEp9PJNUZGzbmT6t8IMeyhvh9zSSg+/L+zm8jKLRj+e5OSjkiuzg6GJ9b0Ah/3EO4l+4CxSziL+fxye9mmEuA6RiixG/QTo66/w6v356gUX3At/QhlxP7ED+gsg/Frwxfz0/8/Mwm8SUryZv3OHwpltK+X/O4WGBHofyxfQ== root@ConfigSetup-mysqlha1" > /home/azureuser/Installationpkg/comman-postgresql/.ssh/authorized_keys
 
-echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArQUpVhovG0wdcrfXt05nsU8wiFSx0E6DmEGZt03EqyHCQC9o5JD0hoIk7xB9ZoLdFVWf7XUS3y9ZqBeeMPcMHewCoVApFt7IExgSoxVvrVXcJLc1qMk82DyqqxmsM8nO8ym9M/kLFLyIqBP8TSQGUQ5bbSd9ws6YEsMO/40IbtH8TZsxEp9PJNUZGzbmT6t8IMeyhvh9zSSg+/L+zm8jKLRj+e5OSjkiuzg6GJ9b0Ah/3EO4l+4CxSziL+fxye9mmEuA6RiixG/QTo66/w6v356gUX3At/QhlxP7ED+gsg/Frwxfz0/8/Mwm8SUryZv3OHwpltK+X/O4WGBHofyxfQ== root@ConfigSetup-mysqlha1" > $HOME/Installationpkg/comman-postgresql/.ssh/id_rsa.pub
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEArQUpVhovG0wdcrfXt05nsU8wiFSx0E6DmEGZt03EqyHCQC9o5JD0hoIk7xB9ZoLdFVWf7XUS3y9ZqBeeMPcMHewCoVApFt7IExgSoxVvrVXcJLc1qMk82DyqqxmsM8nO8ym9M/kLFLyIqBP8TSQGUQ5bbSd9ws6YEsMO/40IbtH8TZsxEp9PJNUZGzbmT6t8IMeyhvh9zSSg+/L+zm8jKLRj+e5OSjkiuzg6GJ9b0Ah/3EO4l+4CxSziL+fxye9mmEuA6RiixG/QTo66/w6v356gUX3At/QhlxP7ED+gsg/Frwxfz0/8/Mwm8SUryZv3OHwpltK+X/O4WGBHofyxfQ== root@ConfigSetup-mysqlha1" > /home/azureuser/Installationpkg/comman-postgresql/.ssh/id_rsa.pub
 
 echo "-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEArQUpVhovG0wdcrfXt05nsU8wiFSx0E6DmEGZt03EqyHCQC9o
@@ -34,7 +34,7 @@ C9ycipxKtfC33+yKxVOxlAKThhVM4iYJXjRYXw+D9H73H4sl/EwoPiZB4aX4MFLk
 NnOWpwKBgQDN8xxiXfu463kn2X5BjghHMsePNl+ukCggYChjNP5QuhRFh57Da8/T
 aoFzQxSW5lp/R/NbbalZ8/cbsKIWex2LnUxA9llPbibqk2hJBuUSCzyS9VnhyRix
 EnKGHg4dOTXUKpuhtpqHnlyhyVFJOf11iVSq+zu72fZtx5qS4OSzJw==
------END RSA PRIVATE KEY-----" > $HOME/Installationpkg/comman-postgresql/.ssh/id_rsa
+-----END RSA PRIVATE KEY-----" > /home/azureuser/Installationpkg/comman-postgresql/.ssh/id_rsa
 
 else
         echo "You are not authourize person, Please leave now."

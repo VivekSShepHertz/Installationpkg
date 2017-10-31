@@ -23,7 +23,7 @@ host    all             all             ::1/128                 md5
 # PostgreSQL Allow IP's address
 host    repmgr          repmgr     10.20.1.0/24     trust
 host    replication     repmgr     10.20.1.0/24     trust
-host    all         all  0.0.0.0/0     md5" > $HOME/Installationpkg/comman-postgresql/pg_hba.conf
+host    all         all  0.0.0.0/0     md5" > /home/azureuser/Installationpkg/comman-postgresql/pg_hba.conf
 
 echo "failover=automatic
 promote_command=/var/lib/pgsql/repmgr/promot.sh
@@ -42,7 +42,7 @@ service_stop_command = /etc/init.d/postgresql stop
 service_restart_command = /etc/init.d/postgresql restart
 loglevel=NOTICE
 logfacility=STDERR
-logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  $HOME/Installationpkg/comman-postgresql/repmgr-master.conf
+logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-master.conf
 
 echo "failover=automatic
 promote_command=/var/lib/pgsql/repmgr/promot.sh
@@ -61,7 +61,7 @@ service_stop_command = /etc/init.d/postgresql stop
 service_restart_command = /etc/init.d/postgresql restart
 loglevel=NOTICE
 logfacility=STDERR
-logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  $HOME/Installationpkg/comman-postgresql/repmgr-standby.conf
+logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-standby.conf
 
 
 echo "#!/bin/bash
@@ -77,7 +77,7 @@ ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $priv_ip:5432
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables-save > /etc/network/iptables.rules
 
-/app42RDS/sbin/mail qwertyuiop & " > $HOME/Installationpkg/comman-postgresql/promot.sh
+/app42RDS/sbin/mail qwertyuiop & " > /home/azureuser/Installationpkg/comman-postgresql/promot.sh
 
 
 else
