@@ -10,7 +10,7 @@ domain=`sudo cat /etc/resolv.conf |grep search|awk '{print $2}'`
 #sudo debconf-set-selections <<< "postfix postfix/mailname string ${host}.${domain}"
 #sudo debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
 
-sudo apt-get install -y wget ca-certificates i
+sudo apt-get install -y wget ca-certificates 
 #postfix mutt mailutils
 
 		if [ $? -eq 0 ]; then
