@@ -52,9 +52,9 @@ if [ $? -eq 0 ]; then
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
-		$HOME/Installationpkg/comman-postgresql/s_Config poiuytrewq
+		/home/azureuser/Installationpkg/comman-postgresql/s_Config poiuytrewq
 		if [ $? -eq 0 ]; then
-			sudo cp -arf $HOME/Installationpkg/comman-postgresql/.ssh /root/.
+			sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /root/.
 		        sudo chown -R root.root /root/.ssh && sudo chmod 700 /root/.ssh && sudo chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa && sudo chmod 644 /root/.ssh/id_rsa.pub
 			if [ $? -eq 0 ]; then
 				echo "PostgreSQLHA1 Configured Successfully"

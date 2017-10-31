@@ -52,13 +52,13 @@ if [ $? -eq 0 ]; then
 	if [ $? -eq 0 ]; then
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		sudo mkdir -p /etc/repmgr
-		$HOME/Installationpkg/comman-postgresql/master_config poiuytrewq $2
-		sudo cp -arf $HOME/Installationpkg/comman-postgresql/repmgr-master.conf /etc/repmgr/repmgr.conf
+		/home/azureuser/Installationpkg/comman-postgresql/master_config poiuytrewq $2
+		sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/repmgr-master.conf /etc/repmgr/repmgr.conf
 		sudo chown -R postgres.postgres /etc/repmgr
 		if [ $? -eq 0 ]; then
 			sudo cp -arf /home/azureuser/Installationpkg/postgresqlha1/app42RDS /.
-			$HOME/Installationpkg/comman-postgresql/s_Config poiuytrewq
-			sudo cp -arf $HOME/Installationpkg/comman-postgresql/.ssh /root/.
+			/home/azureuser/Installationpkg/comman-postgresql/s_Config poiuytrewq
+			sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /root/.
 			sudo chown -R root.root /root/.ssh && sudo chmod 700 /root/.ssh && sudo chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa && sudo chmod 644 /root/.ssh/id_rsa.pub
 			if [ $? -eq 0 ]; then
 				echo "PostgreSQLHA1 Configured Successfully"
