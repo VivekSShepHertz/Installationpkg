@@ -3,7 +3,8 @@
 if [ "$1" == "qscguk." ]; then
 
 sudo apt-get update
-
+echo " Sleep 1 postgresqlha1"
+sleep 10
 host=`hostname`
 domain=`sudo cat /etc/resolv.conf |grep search|awk '{print $2}'`
 
