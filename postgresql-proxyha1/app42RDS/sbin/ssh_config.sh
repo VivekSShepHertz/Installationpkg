@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "
+echo "#       \$OpenBSD: ssh_config,v 1.25 2009/02/17 01:28:32 djm Exp $
+
 # This is the ssh client system-wide configuration file.  See
 # ssh_config(5) for more information.  This file provides defaults for
 # users, and the values can be changed in per-user configuration files
@@ -17,10 +18,9 @@ echo "
 # list of available options, their meanings and defaults, please see the
 # ssh_config(5) man page.
 
-Host *
+# Host *
 #   ForwardAgent no
 #   ForwardX11 no
-#   ForwardX11Trusted yes
 #   RhostsRSAAuthentication no
 #   RSAAuthentication yes
 #   PasswordAuthentication yes
@@ -33,14 +33,12 @@ Host *
 #   CheckHostIP yes
 #   AddressFamily any
 #   ConnectTimeout 0
-   StrictHostKeyChecking no
+  StrictHostKeyChecking no
 #   IdentityFile ~/.ssh/identity
 #   IdentityFile ~/.ssh/id_rsa
 #   IdentityFile ~/.ssh/id_dsa
-#   IdentityFile ~/.ssh/id_ecdsa
-#   IdentityFile ~/.ssh/id_ed25519
 #   Port 22
-#   Protocol 2
+#   Protocol 2,1
 #   Cipher 3des
 #   Ciphers aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc,3des-cbc
 #   MACs hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160
@@ -49,9 +47,14 @@ Host *
 #   TunnelDevice any:any
 #   PermitLocalCommand no
 #   VisualHostKey no
-#   ProxyCommand ssh -q -W %h:%p gateway.example.com
-#   RekeyLimit 1G 1h
-    SendEnv LANG LC_*
-    HashKnownHosts yes
-    GSSAPIAuthentication yes
-    GSSAPIDelegateCredentials no" > /etc/ssh/ssh_config
+Host *
+        GSSAPIAuthentication yes
+# If this option is set to yes then remote X11 clients will have full access
+# to the original X11 display. As virtually no X11 client supports the untrusted
+# mode correctly we set this to yes.
+        ForwardX11Trusted yes
+# Send locale-related environment variables
+        SendEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+        SendEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
+        SendEnv LC_IDENTIFICATION LC_ALL LANGUAGE
+        SendEnv XMODIFIERS" > /etc/ssh/ssh_config

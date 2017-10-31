@@ -4,35 +4,55 @@ case $1 in
 
 create_lvm)
 
-        disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
-        pvcreate $disk_name
-        vgcreate PostgreSQLVG $disk_name
-        vgsize=`vgdisplay |grep "VG Size"|cut -d"." -f1|awk '{print $3}'`
-        lvsize=`echo "$vgsize - 10"|bc`
-        lvcreate -L $lvsize"G" -n PostgreSQLlv PostgreSQLVG
-        lvpath=`lvdisplay |grep "LV Path"|awk '{print $3}'`
-        mkfs.ext4 $lvpath
-        echo "$lvpath /var/lib/postgresql ext4 defaults 1 2" >> /etc/fstab
-	/etc/init.d/postgresql stop && pkill -9 postgres
-        mount -a
-	cd /var/lib/postgresql/ && mkdir 9.6
-        cd /var/lib/postgresql/9.6 && mkdir main && chmod 700 main
-	cd /var/lib/postgresql && mkdir repmgr logs
-	cp -arf /root/.ssh /var/lib/postgresql/.
-	cp /root/.bashrc /var/lib/postgresql/. && cp /root/.profile /var/lib/postgresql/.
-	cp /home/azureuser/Installationpkg/comman-postgresql/promot.sh /var/lib/postgresql/repmgr/. && chmod +x /var/lib/postgresql/repmgr/promot.sh
-	cd /var/lib &&  chown -R postgres.postgres postgresql
+	disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
+	pvcreate $disk_name
+	vgcreate PostgreSQLVG $disk_name
+	vgsize=`vgdisplay |grep "VG Size"|cut -d"." -f1|awk '{print $3}'`
+	lvsize=`echo "$vgsize - 10"|bc`
+	lvcreate -L $lvsize"G" -n PostgreSQLlv PostgreSQLVG
+	lvpath=`lvdisplay |grep "LV Path"|awk '{print $3}'`
+	mkfs.ext4 $lvpath
+	echo "$lvpath /var/lib/pgsql ext4 defaults 1 2" >> /etc/fstab
+	mount -a
+	cd /var/lib/pgsql/ && mkdir 9.6
+	cd /var/lib/pgsql/9.6 && mkdir data backups && chmod 700 data backups
+	cd /var/lib/pgsql && mkdir repmgr
+	cp -arf /root/.ssh /var/lib/pgsql/.
+	cp /root/.bash_profile /var/lib/pgsql/. && cp /root/.bashrc /var/lib/pgsql/.
+		cp /home/azureuser/Installationpkg/comman-postgresql/promot.sh /var/lib/pgsql/repmgr/. && chmod +x /var/lib/pgsql/repmgr/promot.sh
+	cd /var/lib &&  chown -R postgres.postgres pgsql
 	echo 1 > /var/run/repmgrd.pid
+	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /var/lib/postgresql/.
+	sudo chown -R postgres.postgres /var/lib/pgsql/.ssh && sudo chmod 700 /var/lib/pgsql/.ssh && sudo chmod 600 /var/lib/pgsql/.ssh/authorized_keys /var/lib/pgsql/.ssh/id_rsa && sudo chmod 644 /var/lib/pgsql/.ssh/id_rsa.pub
 	chown postgres.postgres /var/run/repmgrd.pid
-	/etc/init.d/postgresql stop && pkill -9 postgres
-	ln -s /usr/lib/postgresql/9.6/bin/* /usr/local/bin/
-        su -c "initdb -D /var/lib/postgresql/9.6/main" postgres
+	ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
+	su -c "initdb -D /var/lib/pgsql/9.6/data/" postgres
+	total_mem=`free -m|head -2|tail -1|awk '{print $2}'`
+	shared_buffers=`echo "$total_mem * 40 / 100"|bc`
+	sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#wal_level = minimal"/"wal_level = hot_standby"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#archive_mode = off"/"archive_mode = on"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#archive_command = ''"/"archive_command = 'cd .'"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#max_wal_senders = 0"/"max_wal_senders = 10"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#wal_keep_segments = 0"/"wal_keep_segments = 10"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#max_replication_slots = 0"/"max_replication_slots = 1"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#hot_standby = off"/"hot_standby = on"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"#shared_preload_libraries = ''"/"shared_preload_libraries = 'repmgr_funcs'"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"max_connections = 100"/"max_connections = $2"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	sudo sed -i s/"shared_buffers = 128MB"/"shared_buffers = ${shared_buffers}MB"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	#sudo sed -i s/"#logging_collector = off"/"logging_collector = on"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	#sudo sed -i s/"#log_directory = 'pg_log'"/"log_directory = '\/var\/lib\/postgresql\/logs\/'"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	#sudo sed -i s/"#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/"log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/g /var/lib/pgsql/9.6/data/postgresql.conf
+	#sudo sed -i s/"#log_file_mode = 0600"/"log_file_mode = 0600"/g /var/lib/pgsql/9.6/data/postgresql.conf
+
+	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/pg_hba.conf /var/lib/pgsql/9.6/data/pg_hba.conf
+
 	/app42RDS/sbin/ConfigConstructer
-        /etc/init.d/ssh restart
+	/etc/init.d/sshd restart
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
 	echo "pre-up iptables-restore < /etc/network/iptables.rules" >> /etc/network/interfaces.d/eth0.cfg
-        /etc/init.d/cron restart
-	/etc/init.d/postgresql restart
+	/etc/init.d/crond restart
+	/etc/init.d/postgresql-9.6 restart
         ;;
 
 conf_master)
@@ -51,10 +71,10 @@ conf_master)
 #	su -c 'createuser '$3'' postgres
 #	su -c 'createdb '$2' -O '$3'' postgres
 #	su -c 'echo "ALTER USER test_user WITH PASSWORD '"'$4'"';"| psql' postgres
-	sudo /etc/init.d/postgresql restart
+	sudo /etc/init.d/postgresql-9.6 restart
 	
 	su -c "repmgr -f /etc/repmgr/repmgr.conf master register" postgres
-	sudo /etc/init.d/postgresql restart
+	sudo /etc/init.d/postgresql-9.6 restart
 	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 
 #	db_name="$2"
@@ -71,11 +91,10 @@ conf_master)
         ;;
 
 conf_slave)
-	sudo /etc/init.d/postgresql stop	
-	sudo pkill -9 postgres
-	cd /var/lib/postgresql/9.6/ &&  mv main main.old && mkdir main && chown -R postgres.postgres main && chmod 700 main
+	sudo /etc/init.d/postgresql-9.6 stop	
+	cd /var/lib/pgsql/9.6/ &&  mv data data.old && mkdir data && chown -R postgres.postgres data && chmod 700 data
 	su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres
-	/etc/init.d/postgresql start && sleep 5 && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
+	/etc/init.d/postgresql-9.6 start && sleep 5 && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
 	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 #        ssh -i /root/.ssh/id_rsa root@10.20.1.8 echo "CHANGE MASTER TO MASTER_HOST = '10.20.1.7', MASTER_PORT = 3306, MASTER_USER = 'slave_user', MASTER_PASSWORD = 'App42RDSSlavePawword', MASTER_LOG_FILE='mysqld-bin.000004', MASTER_LOG_POS=120;"|mysql
 #	echo "FLUSH PRIVILEGES;"|mysql
