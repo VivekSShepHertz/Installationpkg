@@ -19,14 +19,14 @@ create_lvm)
 	cd /var/lib/pgsql && mkdir repmgr
 	cp -arf /root/.ssh /var/lib/pgsql/.
 	cp /root/.bash_profile /var/lib/pgsql/. && cp /root/.bashrc /var/lib/pgsql/.
-		cp /home/azureuser/Installationpkg/comman-postgresql/promot.sh /var/lib/pgsql/repmgr/. && chmod +x /var/lib/pgsql/repmgr/promot.sh
+	cp /home/azureuser/Installationpkg/comman-postgresql/promot.sh /var/lib/pgsql/repmgr/. && chmod +x /var/lib/pgsql/repmgr/promot.sh
 	cd /var/lib &&  chown -R postgres.postgres pgsql
 	echo 1 > /var/run/repmgrd.pid
-	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /var/lib/postgresql/.
+	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /var/lib/pgsql/.
 	sudo chown -R postgres.postgres /var/lib/pgsql/.ssh && sudo chmod 700 /var/lib/pgsql/.ssh && sudo chmod 600 /var/lib/pgsql/.ssh/authorized_keys /var/lib/pgsql/.ssh/id_rsa && sudo chmod 644 /var/lib/pgsql/.ssh/id_rsa.pub
 	chown postgres.postgres /var/run/repmgrd.pid
-	ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
-	su -c "initdb -D /var/lib/pgsql/9.6/data/" postgres
+	sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
+	su -c "/usr/pgsql-9.6/bin/initdb -D /var/lib/pgsql/9.6/data/" postgres
 	total_mem=`free -m|head -2|tail -1|awk '{print $2}'`
 	shared_buffers=`echo "$total_mem * 40 / 100"|bc`
 	sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /var/lib/pgsql/9.6/data/postgresql.conf
@@ -50,7 +50,6 @@ create_lvm)
 	/app42RDS/sbin/ConfigConstructer
 	/etc/init.d/sshd restart
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
-	echo "pre-up iptables-restore < /etc/network/iptables.rules" >> /etc/network/interfaces.d/eth0.cfg
 	/etc/init.d/crond restart
 	/etc/init.d/postgresql-9.6 restart
         ;;
