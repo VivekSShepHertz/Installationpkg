@@ -93,11 +93,6 @@ else
 	exit 1
 fi
 
-else 
-
-	echo "Repo Mirror not set"
-        exit 1
-fi
 
 else
         echo "You are not authourize person, Please leave now."
