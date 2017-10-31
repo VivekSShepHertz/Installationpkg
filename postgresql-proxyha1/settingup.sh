@@ -3,9 +3,6 @@
 if [ "$1" == "qscguk." ]; then
 
 sudo apt-get update
-if [ $? -nq 0 ]; then
-exit 1
-fi
 
 host=`hostname`
 domain=`sudo cat /etc/resolv.conf |grep search|awk '{print $2}'`
