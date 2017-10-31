@@ -48,9 +48,11 @@ if [ $? -eq 0 ]; then
 	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/pgdg-96-centos.repo && 
 	sleep 60
-	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
+	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
+		sleep 60
+		sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		sudo mkdir -p /etc/repmgr
 		/home/azureuser/Installationpkg/comman-postgresql/master_config poiuytrewq $2
@@ -62,26 +64,26 @@ if [ $? -eq 0 ]; then
 			sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /root/.
 			sudo chown -R root.root /root/.ssh && sudo chmod 700 /root/.ssh && sudo chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa && sudo chmod 644 /root/.ssh/id_rsa.pub
 			if [ $? -eq 0 ]; then
-				echo "PostgreSQLHA1 Configured Successfully"
+				echo "PostgreSQLHA2 Configured Successfully"
 			else
 				echo "SSH Key Not Installed"
 				exit 1
 			fi
 		else
-			echo "PostgreSQLHA1 Config Configuration Failed"
+			echo "PostgreSQLHA2 Config Configuration Failed"
 			exit 1
 		fi
 	else
-		echo "PostgreSQLHA1 Service Could Not Be Installed"
+		echo "PostgreSQLHA2 Service Could Not Be Installed"
 		exit 1
 	fi
 else
-	echo "PostgreSQLHA1 Repo Setup Failed"
+	echo "PostgreSQLHA2 Repo Setup Failed"
 	exit 1
 fi
 
 else
-        echo "CentOS Repo Setup Failed"
+        echo "PostgreSQLHA2 CentOS Repo Setup Failed"
         exit 1
 fi
 

@@ -48,6 +48,7 @@ if [ $? -eq 0 ]; then
 	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/pgdg-96-centos.repo && 
 #	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
+	sleep 60
 	sudo cp -arf /home/azureuser/Installationpkg/postgresql-proxyha1/app42RDS /.
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
@@ -57,26 +58,26 @@ if [ $? -eq 0 ]; then
 			sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /root/.
 		        sudo chown -R root.root /root/.ssh && sudo chmod 700 /root/.ssh && sudo chmod 600 /root/.ssh/authorized_keys /root/.ssh/id_rsa && sudo chmod 644 /root/.ssh/id_rsa.pub
 			if [ $? -eq 0 ]; then
-				echo "PostgreSQLHA1 Configured Successfully"
+				echo "PostgreSQL-ProxyHA Configured Successfully"
 			else
-				echo "SSH Key Not Installed"
+				echo "PostgreSQL-ProxyHA SSH Key Not Installed"
 				exit 1
 			fi
 		else
-			echo "PostgreSQL-ProxyHA1 Config Configuration Failed"
+			echo "PostgreSQL-ProxyHA Config Configuration Failed"
 			exit 1
 		fi
 	else
-		echo "PostgreSQL-ProxyHA1 Service Could Not Be Installed"
+		echo "PostgreSQL-ProxyHA Service Could Not Be Installed"
 		exit 1
 	fi
 else
-	echo "PostgreSQL-ProxyHA1 Repo Setup Failed"
+	echo "PostgreSQL-ProxyHA Repo Setup Failed"
 	exit 1
 fi
 
 else
-        echo "CentOS Repo Setup Failed"
+        echo "PostgreSQL-ProxyHA CentOS Repo Setup Failed"
         exit 1
 fi
 

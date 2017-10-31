@@ -49,9 +49,11 @@ if [ $? -eq 0 ]; then
 	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/pgdg-96-centos.repo && 
 	sleep 60
-	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96 && sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
+	sudo yum install -y postgresql96 postgresql96-contrib postgresql96-server repmgr96
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
+		sleep 60
+		sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		sudo mkdir -p /etc/repmgr
 		/home/azureuser/Installationpkg/comman-postgresql/master_config poiuytrewq $2
@@ -82,7 +84,7 @@ else
 fi
 
 else
-        echo "CentOS Repo Setup Failed"
+        echo "PostgreSQLHA1 CentOS Repo Setup Failed"
         exit 1
 fi
 
