@@ -3,6 +3,11 @@
 case $1 in
 
 conf_proxy)
+	setenforce 0
+        echo "setenforce 0" >> /etc/rc.local
+        sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
+        echo "1" > /proc/sys/net/ipv4/ip_forward
+        sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf
 
 	/app42RDS/sbin/ConfigConstructer
         /etc/init.d/sshd restart

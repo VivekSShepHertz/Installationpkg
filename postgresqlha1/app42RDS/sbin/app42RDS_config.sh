@@ -3,6 +3,11 @@
 case $1 in
 
 create_lvm)
+	setenforce 0
+        echo "setenforce 0" >> /etc/rc.local
+        sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
+	echo "1" > /proc/sys/net/ipv4/ip_forward
+        sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf
 
 	disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
 	pvcreate $disk_name
