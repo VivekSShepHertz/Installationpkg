@@ -72,9 +72,9 @@ conf_master)
 #	su -c 'echo "ALTER USER test_user WITH PASSWORD '"'$4'"';"| psql' postgres
 	sudo /etc/init.d/postgresql-9.6 restart
 	
-	su -c "repmgr -f /etc/repmgr/repmgr.conf master register" postgres
+	su -c "/usr/pgsql-9.6/repmgr -f /etc/repmgr/repmgr.conf master register" postgres
 	sudo /etc/init.d/postgresql-9.6 restart
-	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
+	su -c "/usr/pgsql-9.6/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 
 #	db_name="$2"
 #	user_name="$3"
@@ -92,9 +92,9 @@ conf_master)
 conf_slave)
 	sudo /etc/init.d/postgresql-9.6 stop	
 	cd /var/lib/pgsql/9.6/ &&  mv data data.old && mkdir data && chown -R postgres.postgres data && chmod 700 data
-	su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres
-	/etc/init.d/postgresql-9.6 start && sleep 5 && su -c "repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
-	su -c "repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
+	su -c "/usr/pgsql-9.6/repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres
+	/etc/init.d/postgresql-9.6 start && sleep 5 && su -c "/usr/pgsql-9.6/repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres
+	su -c "/usr/pgsql-9.6/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres
 #        ssh -i /root/.ssh/id_rsa root@10.20.1.8 echo "CHANGE MASTER TO MASTER_HOST = '10.20.1.7', MASTER_PORT = 3306, MASTER_USER = 'slave_user', MASTER_PASSWORD = 'App42RDSSlavePawword', MASTER_LOG_FILE='mysqld-bin.000004', MASTER_LOG_POS=120;"|mysql
 #	echo "FLUSH PRIVILEGES;"|mysql
 #        echo "start slave;"|mysql
