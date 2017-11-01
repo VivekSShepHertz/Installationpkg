@@ -54,9 +54,10 @@ create_lvm)
 
 	/app42RDS/sbin/ConfigConstructer
 	/etc/init.d/sshd restart
+	sleep 10 
+	/etc/init.d/postgresql-9.6 restart
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
 	/etc/init.d/crond restart
-	/etc/init.d/postgresql-9.6 restart
         ;;
 
 conf_master)
