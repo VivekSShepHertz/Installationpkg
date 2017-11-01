@@ -16,7 +16,7 @@ conf_proxy)
         echo "8388608 8388608 8388608" > /proc/sys/net/ipv4/tcp_mem
         echo "4096 65536 8388608" > /proc/sys/net/ipv4/tcp_wmem
         echo "4096 87380 8388608" > /proc/sys/net/ipv4/tcp_rmem
-        echo "2147483647 2147483647 1200 65535" > /proc/sys/kernel/sem
+        echo "128 3200 256 256" > /proc/sys/kernel/sem
         echo "fs.file-max = 999999" >> /etc/sysctl.conf
         echo "net.core.rmem_max = 8388608" >> /etc/sysctl.conf
         echo "net.core.wmem_max = 8388608" >> /etc/sysctl.conf
@@ -26,7 +26,7 @@ conf_proxy)
         echo "net.ipv4.tcp_wmem = 4096 65536 8388608" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_mem = 8388608 8388608 8388608" >> /etc/sysctl.conf
         echo "net.ipv4.route.flush = 1" >> /etc/sysctl.conf
-        echo "kernel.sem=2147483647 2147483647 1200 65535" >> /etc/sysctl.conf
+        echo "kernel.sem=128 3200 256 256" >> /etc/sysctl.conf
         echo "root            soft    nofile          unlimited
 root            hard    nofile          unlimited
 azureuser       soft    nofile          unlimited
