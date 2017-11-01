@@ -8,6 +8,40 @@ create_lvm)
         sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
 	echo "1" > /proc/sys/net/ipv4/ip_forward
         sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf
+	echo "999999" > /proc/sys/fs/file-max
+	echo "8388608" > /proc/sys/net/core/rmem_max
+	echo "8388608" > /proc/sys/net/core/wmem_max
+	echo "65536" > /proc/sys/net/core/wmem_default
+	echo "65536" > /proc/sys/net/core/rmem_default
+	echo "8388608 8388608 8388608" > /proc/sys/net/ipv4/tcp_mem
+	echo "4096 65536 8388608" > /proc/sys/net/ipv4/tcp_wmem
+	echo "4096 87380 8388608" > /proc/sys/net/ipv4/tcp_rmem
+	echo "2147483647 2147483647 1200 65535" > /proc/sys/kernel/sem
+	echo "fs.file-max = 999999" >> /etc/sysctl.conf
+	echo "net.core.rmem_max = 8388608" >> /etc/sysctl.conf
+	echo "net.core.wmem_max = 8388608" >> /etc/sysctl.conf
+	echo "net.core.rmem_default = 65536" >> /etc/sysctl.conf
+	echo "net.core.wmem_default = 65536" >> /etc/sysctl.conf
+	echo "net.ipv4.tcp_rmem = 4096 87380 8388608" >> /etc/sysctl.conf
+	echo "net.ipv4.tcp_wmem = 4096 65536 8388608" >> /etc/sysctl.conf
+	echo "net.ipv4.tcp_mem = 8388608 8388608 8388608" >> /etc/sysctl.conf
+	echo "net.ipv4.route.flush = 1" >> /etc/sysctl.conf
+	echo "kernel.sem=2147483647 2147483647 1200 65535" >> /etc/sysctl.conf
+	echo "root            soft    nofile          unlimited
+root            hard    nofile          unlimited
+azureuser       soft    nofile          unlimited
+azureuser       hard    nofile          unlimited
+postgres        soft    nofile          unlimited
+postgres        hard    nofile          unlimited
+root       		soft    nproc     unlimited
+azureuser       soft    nproc     unlimited
+postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
+	ulimit -Hn 1000000
+	ulimit -Sn 1000000
+	ulimit -Hu unlimited
+	ulimit -Su unlimited
+	sudo sed -i s/"rd_NO_DM"/"rd_NO_DM disable_mtrr_trim"/g /boot/grub/grub.conf
+	
 
 	disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
 	pvcreate $disk_name
@@ -55,9 +89,9 @@ create_lvm)
 	/app42RDS/sbin/ConfigConstructer
 	/etc/init.d/sshd restart
 	sleep 10 
-	/etc/init.d/postgresql-9.6 restart
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
 	/etc/init.d/crond restart
+	/etc/init.d/postgresql-9.6 restart
         ;;
 
 conf_master)
