@@ -31,20 +31,15 @@ create_lvm)
 	echo "net.ipv4.route.flush = 1" >> /etc/sysctl.conf
 	echo "kernel.sem=128 3200 256 256" >> /etc/sysctl.conf
 	echo "Set File Limits"
-	echo "root            soft    nofile          unlimited
-root            hard    nofile          unlimited
-azureuser       soft    nofile          unlimited
-azureuser       hard    nofile          unlimited
-postgres        soft    nofile          unlimited
-postgres        hard    nofile          unlimited
-root       		soft    nproc     unlimited
-azureuser       soft    nproc     unlimited
-postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
+	echo "root            soft    nofile          1000000
+root            hard    nofile          1000000
+azureuser       soft    nofile          1000000
+azureuser       hard    nofile          1000000
+postgres        soft    nofile          1000000
+postgres        hard    nofile          1000000" >> /etc/security/limits.conf
 	echo "Set File Limits OnSession"
 	ulimit -Hn 1000000
 	ulimit -Sn 1000000
-	ulimit -Hu unlimited
-	ulimit -Su unlimited
 	echo "Set Gurb Entry"
 	sudo sed -i s/"rd_NO_DM"/"rd_NO_DM disable_mtrr_trim"/g /boot/grub/grub.conf
 	

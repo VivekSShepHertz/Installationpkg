@@ -8,6 +8,7 @@ conf_proxy)
         sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
         echo "1" > /proc/sys/net/ipv4/ip_forward
         sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf
+	echo "Set Kernel Limits"
         echo "999999" > /proc/sys/fs/file-max
         echo "8388608" > /proc/sys/net/core/rmem_max
         echo "8388608" > /proc/sys/net/core/wmem_max
@@ -27,19 +28,17 @@ conf_proxy)
         echo "net.ipv4.tcp_mem = 8388608 8388608 8388608" >> /etc/sysctl.conf
         echo "net.ipv4.route.flush = 1" >> /etc/sysctl.conf
         echo "kernel.sem=128 3200 256 256" >> /etc/sysctl.conf
-        echo "root            soft    nofile          unlimited
-root            hard    nofile          unlimited
-azureuser       soft    nofile          unlimited
-azureuser       hard    nofile          unlimited
-postgres        soft    nofile          unlimited
-postgres        hard    nofile          unlimited
-root                    soft    nproc     unlimited
-azureuser       soft    nproc     unlimited
-postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
+        echo "Set File Limits"
+        echo "root            soft    nofile          1000000
+root            hard    nofile          1000000
+azureuser       soft    nofile          1000000
+azureuser       hard    nofile          1000000
+postgres        soft    nofile          1000000
+postgres        hard    nofile          1000000" >> /etc/security/limits.conf
+        echo "Set File Limits OnSession"
         ulimit -Hn 1000000
         ulimit -Sn 1000000
-        ulimit -Hu unlimited
-        ulimit -Su unlimited
+        echo "Set Gurb Entry"
         sudo sed -i s/"rd_NO_DM"/"rd_NO_DM disable_mtrr_trim"/g /boot/grub/grub.conf
 
 	/app42RDS/sbin/ConfigConstructer
