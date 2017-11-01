@@ -27,7 +27,7 @@ host    all         all  0.0.0.0/0     md5" > /home/azureuser/Installationpkg/co
 
 echo "failover=automatic
 promote_command=/var/lib/pgsql/repmgr/promot.sh
-follow_command='repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
+follow_command='/usr/pgsql-9.6/bin/repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
 cluster=$cluster_name
 node=1
 node_name=`hostname`
@@ -36,17 +36,17 @@ conninfo='host=10.20.1.7 user=repmgr dbname=repmgr'
 master_response_timeout=10
 reconnect_attempts=3
 reconnect_interval=10
-pg_bindir=/usr/lib/postgresql/9.6/bin
-service_start_command = /etc/init.d/postgresql start
-service_stop_command = /etc/init.d/postgresql stop
-service_restart_command = /etc/init.d/postgresql restart
+pg_bindir=/usr/pgsql-9.6/bin/
+service_start_command = /etc/init.d/postgresql-9.6 start
+service_stop_command = /etc/init.d/postgresql-9.6 stop
+service_restart_command = /etc/init.d/postgresql-9.6 restart
 loglevel=NOTICE
 logfacility=STDERR
-logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-master.conf
+logfile='/var/lib/pgsql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-master.conf
 
 echo "failover=automatic
 promote_command=/var/lib/pgsql/repmgr/promot.sh
-follow_command='repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
+follow_command='/usr/pgsql-9.6/bin/repmgr standby follow -f /etc/repmgr/repmgr.conf --log-to-file'
 cluster=$cluster_name
 node=2
 node_name=`hostname`
@@ -55,13 +55,13 @@ conninfo='host=10.20.1.8 user=repmgr dbname=repmgr'
 master_response_timeout=10
 reconnect_attempts=3
 reconnect_interval=10
-pg_bindir=/usr/lib/postgresql/9.6/bin
-service_start_command = /etc/init.d/postgresql start
-service_stop_command = /etc/init.d/postgresql stop
-service_restart_command = /etc/init.d/postgresql restart
+pg_bindir=/usr/pgsql-9.6/bin/
+service_start_command = /etc/init.d/postgresql-9.6 start
+service_stop_command = /etc/init.d/postgresql-9.6 stop
+service_restart_command = /etc/init.d/postgresql-9.6 restart
 loglevel=NOTICE
 logfacility=STDERR
-logfile='/var/lib/postgresql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-standby.conf
+logfile='/var/lib/pgsql/repmgr/repmgr.log'" >  /home/azureuser/Installationpkg/comman-postgresql/repmgr-standby.conf
 
 
 echo "#!/bin/bash
@@ -71,11 +71,11 @@ repmgr -f /etc/repmgr/repmgr.conf standby promote
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -F
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $priv_ip:5432
-ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 iptables-save > /etc/network/iptables.rules
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.5 /etc/init.d/iptables save
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -F
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $priv_ip:5432
-ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 iptables-save > /etc/network/iptables.rules
+ssh -i \$HOME/.ssh/id_rsa root@10.20.1.6 /etc/init.d/iptables save
 
 /app42RDS/sbin/mail qwertyuiop & " > /home/azureuser/Installationpkg/comman-postgresql/promot.sh
 

@@ -88,12 +88,15 @@ postgres        hard    nofile          1000000" >> /etc/security/limits.conf
 	#sudo sed -i s/"#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/"log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"/g /var/lib/pgsql/9.6/data/postgresql.conf
 	#sudo sed -i s/"#log_file_mode = 0600"/"log_file_mode = 0600"/g /var/lib/pgsql/9.6/data/postgresql.conf
 
-	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/pg_hba.conf /var/lib/pgsql/9.6/data/pg_hba.conf
+	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/pg_hba.conf /var/lib/pgsql/9.6/data/pg_hba.conf 
+	sudo chown postgres.postgres /var/lib/pgsql/9.6/data/pg_hba.conf
+	sudo chmod 600 /var/lib/pgsql/9.6/data/pg_hba.conf
 
 	/app42RDS/sbin/ConfigConstructer
 	/etc/init.d/sshd restart
 	sleep 10 
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
+	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_failover_agent" >> /etc/crontab
 	/etc/init.d/crond restart
 	/etc/init.d/postgresql-9.6 restart
         ;;

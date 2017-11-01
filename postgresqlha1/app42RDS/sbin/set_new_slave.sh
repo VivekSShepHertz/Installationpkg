@@ -15,9 +15,10 @@ setup_name=`hostname|cut -d"-" -f1`
 #echo "`grep "is down" /var/log/masterha/master-mysql/master-mysql.log`" > /tmp/new_slave.log 2>&1
 #echo "`grep "is down" /var/log/masterha/master-mysql/master-mysql.log|tail -1|awk '{print $2}'`" >> /tmp/new_slave.log 2>&1
 #Email="vivek.soni@shephertz.co.in"
-Email="vivek.soni@shephertz.co.in, sintu.kumar@shephertz.co.in, nishant.sharma@shephertz.co.in"
+Email="vivek.soni@shephertz.co.in, sintu.kumar@shephertz.co.in, dharampal.singh@shephertz.co.in"
 
 #echo "old_master = $old_master , new_master = $new_master , new_bin_log_file = $new_bin_log_file , new_master_log_pos = $new_master_log_pos"
+>/tmp/new_slave.log
 
 counter=0
 
@@ -28,18 +29,19 @@ while [ $counter -lt 525600  ]
 do
 
 
-echo "nc -zv 10.20.1.8 3306" >> /tmp/new_slave.log 2>&1
+echo "nc -zv 10.20.1.8 5432" >> /tmp/new_slave.log 2>&1
 #echo "old_master = $old_master , new_master = $new_master , new_bin_log_file = $new_bin_log_file , new_master_log_pos = $new_master_log_pos" >> /tmp/new_slave.log 2>&1
-nc -zv 10.20.1.7 3306 >> /tmp/new_slave.log 2>&1
+nc -zv 10.20.1.8 5432 >> /tmp/new_slave.log 2>&1
 
 if [ $? -eq 0 ]; then
-		sudo /etc/init.d/postgresql stop >> /tmp/new_slave.log 2>&1
-        sudo pkill -9 postgres >> /tmp/new_slave.log 2>&1
+        ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 sudo /etc/init.d/postgresql-9.6 stop >> /tmp/new_slave.log 2>&1
         if [ $? -eq 0 ]; then
-                su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres >> /tmp/new_slave.log 2>&1
-		
+                ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 'su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres' >> /tmp/new_slave.log 2>&1
+
                 if [ $? -eq 0 ]; then
-                        /etc/init.d/postgresql start >> /tmp/new_slave.log 2>&1
+                        ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 '/etc/init.d/postgresql-9.6 start && sleep 5 && su -c "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres' >> /tmp/new_slave.log 2>&1
+                        ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 'su -c "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres' >> /tmp/new_slave.log 2>&1
+
                                 counter=525601
                         else
                                 mail -s "$setup_name : New PostgreSQL Slave Starting Failure : New Slave 10.20.1.8" $Email < /tmp/new_slave.log
@@ -62,4 +64,3 @@ else
         echo "You are not authourize person, Please leave now."
         exit
 fi
-

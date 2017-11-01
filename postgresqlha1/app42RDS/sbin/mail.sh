@@ -11,10 +11,10 @@ sleep 1m
 
 #pkill -9 perl
 
-Email="vivek.soni@shephertz.co.in, sintu.kumar@shephertz.co.in, nishant.sharma@shephertz.co.in"
+Email="vivek.soni@shephertz.co.in, sintu.kumar@shephertz.co.in, dharampal.singh@shephertz.co.in"
 setup_name=`hostname|cut -d"-" -f1`
 
-mutt -s "$setup_name App42RDS PostgreSQL Failover = New Master - 10.20.1.8" $Email -a /var/lib/postgresql/repmgr/repmgr.log < /var/lib/postgresql/repmgr/repmgr.log
+mutt -s "$setup_name App42RDS PostgreSQL Failover = New Master - 10.20.1.7" $Email -a /var/lib/pgsql/repmgr/repmgr.log < /var/lib/pgsql/repmgr/repmgr.log
 #mail -s "$setup_name App42RDS Mysql Failover = New Master - 10.20.1.8" $Email < /var/log/masterha/master-mysql/master-mysql.log
 #scp -i /root/.ssh/id_rsa /var/log/masterha/master-mysql/master-mysql.log root@10.20.1.6:/var/log/masterha/master-mysql/master-mysql.log
 #rm -rf /etc/mha/master.cnf /etc/mha/recovery.cnf
