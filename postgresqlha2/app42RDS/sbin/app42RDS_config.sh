@@ -3,11 +3,14 @@
 case $1 in
 
 create_lvm)
+	echo "disable SELINUX"
 	setenforce 0
         echo "setenforce 0" >> /etc/rc.local
         sed -i 's/'SELINUX=enforcing'/'SELINUX=disabled'/g' /etc/selinux/config
+	echo "Set IP Forwording"
 	echo "1" > /proc/sys/net/ipv4/ip_forward
         sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf
+	echo "Set Kernel Limits"
 	echo "999999" > /proc/sys/fs/file-max
 	echo "8388608" > /proc/sys/net/core/rmem_max
 	echo "8388608" > /proc/sys/net/core/wmem_max
@@ -16,7 +19,7 @@ create_lvm)
 	echo "8388608 8388608 8388608" > /proc/sys/net/ipv4/tcp_mem
 	echo "4096 65536 8388608" > /proc/sys/net/ipv4/tcp_wmem
 	echo "4096 87380 8388608" > /proc/sys/net/ipv4/tcp_rmem
-	echo "2147483647 2147483647 1200 65535" > /proc/sys/kernel/sem
+	echo "128 3200 256 256" > /proc/sys/kernel/sem
 	echo "fs.file-max = 999999" >> /etc/sysctl.conf
 	echo "net.core.rmem_max = 8388608" >> /etc/sysctl.conf
 	echo "net.core.wmem_max = 8388608" >> /etc/sysctl.conf
@@ -26,7 +29,8 @@ create_lvm)
 	echo "net.ipv4.tcp_wmem = 4096 65536 8388608" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_mem = 8388608 8388608 8388608" >> /etc/sysctl.conf
 	echo "net.ipv4.route.flush = 1" >> /etc/sysctl.conf
-	echo "kernel.sem=2147483647 2147483647 1200 65535" >> /etc/sysctl.conf
+	echo "kernel.sem=128 3200 256 256" >> /etc/sysctl.conf
+	echo "Set File Limits"
 	echo "root            soft    nofile          unlimited
 root            hard    nofile          unlimited
 azureuser       soft    nofile          unlimited
@@ -36,13 +40,15 @@ postgres        hard    nofile          unlimited
 root       		soft    nproc     unlimited
 azureuser       soft    nproc     unlimited
 postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
+	echo "Set File Limits OnSession"
 	ulimit -Hn 1000000
 	ulimit -Sn 1000000
 	ulimit -Hu unlimited
 	ulimit -Su unlimited
+	echo "Set Gurb Entry"
 	sudo sed -i s/"rd_NO_DM"/"rd_NO_DM disable_mtrr_trim"/g /boot/grub/grub.conf
 	
-
+	echo "Create LVM"
 	disk_name=`fdisk -l|grep Disk|grep -v "Disk identifier"|sort|tail -1|awk '{print $2}'|cut -d":" -f1`
 	pvcreate $disk_name
 	vgcreate PostgreSQLVG $disk_name
@@ -53,6 +59,7 @@ postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
 	mkfs.ext4 $lvpath
 	echo "$lvpath /var/lib/pgsql ext4 defaults 1 2" >> /etc/fstab
 	mount -a
+	echo "Setup PostgreSQL Dir"
 	cd /var/lib/pgsql/ && mkdir 9.6
 	cd /var/lib/pgsql/9.6 && mkdir data backups && chmod 700 data backups
 	cd /var/lib/pgsql && mkdir repmgr
@@ -65,7 +72,9 @@ postgres        soft    nproc     unlimited" >> /etc/security/limits.conf
 	sudo chown -R postgres.postgres /var/lib/pgsql/.ssh && sudo chmod 700 /var/lib/pgsql/.ssh && sudo chmod 600 /var/lib/pgsql/.ssh/authorized_keys /var/lib/pgsql/.ssh/id_rsa && sudo chmod 644 /var/lib/pgsql/.ssh/id_rsa.pub
 	chown postgres.postgres /var/run/repmgrd.pid
 	sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
+	echo "InitDB PostgreSQL"
 	su -c "/usr/pgsql-9.6/bin/initdb -D /var/lib/pgsql/9.6/data/" postgres
+	echo "Set PostgreSQL Config"
 	total_mem=`free -m|head -2|tail -1|awk '{print $2}'`
 	shared_buffers=`echo "$total_mem * 40 / 100"|bc`
 	sudo sed -i s/"#listen_addresses = 'localhost'"/"listen_addresses = '*'"/g /var/lib/pgsql/9.6/data/postgresql.conf
