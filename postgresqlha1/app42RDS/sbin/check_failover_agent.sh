@@ -25,6 +25,7 @@ echo "PID = $pid"
 
 if [ -z "$pid" ]; then
         echo 1 > /var/run/repmgrd.pid
+	chown postgres.postgres /var/run/repmgrd.pid
         if [ $? -eq 0 ]; then
                 su -c '/usr/pgsql-9.6/bin/repmgrd -m -d -p /var/run/repmgrd.pid -f /etc/repmgr/repmgr.conf --verbose >> /var/lib/pgsql/repmgr/repmgr.log 2>&1' postgres
                 if [ $? -eq 0 ]; then

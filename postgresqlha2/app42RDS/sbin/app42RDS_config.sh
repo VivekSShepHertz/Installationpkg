@@ -66,7 +66,7 @@ postgres        hard    nofile          1000000" >> /etc/security/limits.conf
 	sudo cp -arf /home/azureuser/Installationpkg/comman-postgresql/.ssh /var/lib/pgsql/.
 	sudo chown -R postgres.postgres /var/lib/pgsql/.ssh && sudo chmod 700 /var/lib/pgsql/.ssh && sudo chmod 600 /var/lib/pgsql/.ssh/authorized_keys /var/lib/pgsql/.ssh/id_rsa && sudo chmod 644 /var/lib/pgsql/.ssh/id_rsa.pub
 	chown postgres.postgres /var/run/repmgrd.pid
-	sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
+	sudo ln -s /usr/pgsql-9.6/bin/* /bin/
 	echo "InitDB PostgreSQL"
 	su -c "/usr/pgsql-9.6/bin/initdb -D /var/lib/pgsql/9.6/data/" postgres
 	echo "Set PostgreSQL Config"

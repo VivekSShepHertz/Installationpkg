@@ -34,13 +34,15 @@ echo "nc -zv 10.20.1.8 5432" >> /tmp/new_slave.log 2>&1
 nc -zv 10.20.1.8 5432 >> /tmp/new_slave.log 2>&1
 
 if [ $? -eq 0 ]; then
-        ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 sudo /etc/init.d/postgresql-9.6 stop >> /tmp/new_slave.log 2>&1
+        ssh -i $HOME/.ssh/id_rsa -tt root@10.20.1.8 sudo /etc/init.d/postgresql-9.6 stop >> /tmp/new_slave.log 2>&1
         if [ $? -eq 0 ]; then
                 ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 'su -c "repmgr -f /etc/repmgr/repmgr.conf --force --rsync-only -h 10.20.1.7 -d repmgr -U repmgr --verbose standby clone" postgres' >> /tmp/new_slave.log 2>&1
 
                 if [ $? -eq 0 ]; then
                         ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 '/etc/init.d/postgresql-9.6 start && sleep 5 && su -c "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf --force standby register" postgres' >> /tmp/new_slave.log 2>&1
                         ssh -i $HOME/.ssh/id_rsa root@10.20.1.8 'su -c "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres' >> /tmp/new_slave.log 2>&1
+			if [ $? -eq 0 ]; then
+                                mail -s "$setup_name : New PostgreSQL Slave Setup Done : New Slave 10.20.1.7" $Email < /tmp/new_slave.log
 
                                 counter=525601
                         else
