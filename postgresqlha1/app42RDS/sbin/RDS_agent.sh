@@ -46,9 +46,9 @@ get.postgresvm.info)
                                 fi
                         fi
 			rm -rf /tmp/err /tmp/err1
-                        echo '{"code":5000,"success":"true","message":"Current Postgres VM Info", "CPU":"'$used_cpu'", "Memory":"'$mem_percent'", "Load Avg":"'$load'", "Threads Connected":"'$conn'", "Max Connection":"'$max_conn'", "Used Data Disk":"'$disk_MB'"}'
+                        echo '{"code":5000,"success":"true","message":"Current PostgreSql VM Info", "CPU":"'$used_cpu'", "Memory":"'$mem_percent'", "Load Avg":"'$load'", "Threads Connected":"'$conn'", "Max Connection":"'$max_conn'", "Used Data Disk":"'$disk_MB'"}'
                 else
-                        echo '{"success":"false","code":3001, "message":"Current Postgres VM Info Could Not Be Fetch, Due To Postgres Not Running"}'
+                        echo '{"success":"false","code":3001, "message":"Current PostgreSql VM Info Could Not Be Fetch, Due To PostgreSql Not Running"}'
                 fi
         ;;
 		
@@ -80,9 +80,9 @@ get.postgres.connection)
                                 fi
                         fi
 			rm -rf /tmp/err
-			echo '{"code":5000,"success":"true","message":"Current Postgres Threads Connected","Threads Connected":"'$conn'"}'
+			echo '{"code":5000,"success":"true","message":"Current PostgreSql Threads Connected","Threads Connected":"'$conn'"}'
 		else
-			echo '{"success":"false","code":3001, "message":"Current Postgres Threads Connected Could Not Be Fetch, Due To Postgres Not Running"}'
+			echo '{"success":"false","code":3001, "message":"Current PostgreSql Threads Connected Could Not Be Fetch, Due To PostgreSql Not Running"}'
 		fi
         ;;
 
@@ -97,9 +97,9 @@ get.postgres.max.connection)
 		/bin/echo "d=$d"
 		if [ ! -z $d ]; then
                         max_conn=`cat /var/lib/pgsql/9.6/data/postgresql.conf | grep "max_connections"|awk '{print $3}'`
-			echo '{"code":5000,"success":"true","message":"Current Max Connection Set on Postgres","Max Connection":"'$max_conn'"}'
+			echo '{"code":5000,"success":"true","message":"Current Max Connection Set on PostgreSql","Max Connection":"'$max_conn'"}'
 		else
-			echo '{"success":"false","code":3001, "message":"Current Max Connection Set on postgres Could Not Be Fetch, Due To Postgres Not Running"}'
+			echo '{"success":"false","code":3001, "message":"Current Max Connection Set on postgres Could Not Be Fetch, Due To PostgreSql Not Running"}'
 		fi
         ;;
 
@@ -108,9 +108,9 @@ get.current.master)
 
 	master=`su -c  "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres|grep master|cut -d "=" -f2|awk '{print $1}'`
         if [ ! -z $master ]; then
-                echo '{"code":5000,"success":"true","message":"Current MySql Master","Master":"'$master'"}'
+                echo '{"code":5000,"success":"true","message":"Current PostgreSql Master","Master":"'$master'"}'
         else
-                        echo '{"success":"false","code":3001, "message":"We Cannot Find Postgres Master"}'
+                        echo '{"success":"false","code":3001, "message":"We Cannot Find PostgreSql Master"}'
                
 
         fi
@@ -120,15 +120,15 @@ get.current.master)
 get.current.slave)
 	slave=`su -c  "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres|grep standby|cut -d "=" -f2|awk '{print $1}'`
         if [ ! -z $slave ]; then
-                echo '{"code":5000,"success":"true","message":"Current Postgres Slave","Slave":"'$slave'"}'
+                echo '{"code":5000,"success":"true","message":"Current PostgreSql Slave","Slave":"'$slave'"}'
         	
 		else
-                        echo '{"success":"false","code":3001, "message":"We Cannot Find Postgres Slave"}'
+                        echo '{"success":"false","code":3001, "message":"We Cannot Find PostgreSql Slave"}'
                 
         fi
         ;;
 
-get.mha.status)
+get.failover.agent.status)
 	slave=`su -c  "/usr/pgsql-9.6/bin/repmgr -f /etc/repmgr/repmgr.conf cluster show" postgres|grep standby|cut -d "=" -f2|awk '{print $1}'`
 
 	repmgr_pid=`ssh -i $HOME/.ssh/id_rsa root@$slave ps aux |grep repmgrd|grep -v grep|awk '{print $2}'`
@@ -213,7 +213,7 @@ run.failover)
         	ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 	        ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 5432 --to-destination $master:5432
 		ssh -i /root/.ssh/id_rsa root@10.20.1.6 /etc/init.d/iptables save
-	        echo '{"success":"false","code":3001, "message":"MySql Failover Could Not Be Succeed"}'
+	        echo '{"success":"false","code":3001, "message":"PostgreSql Failover Could Not Be Succeed"}'
 	fi
         ;;
 
@@ -293,9 +293,9 @@ reset.password)
 	su -c 'echo "ALTER USER '$username' WITH PASSWORD '"'$new_password'"';"|/usr/bin/psql' postgres
 	alt=`cat /tmp/reset_pwd`
         if [ "$alt" == "ALTER ROLE" ]; then
-		echo '{"code":5000,"success":"true","message":"MySql User Password Update Successfully"}'
+		echo '{"code":5000,"success":"true","message":"PostgreSql User Password Update Successfully"}'
 	else
-		echo '{"success":"false","code":3001, "message":"Current MySql User Password Could Not Be Update"}'
+		echo '{"success":"false","code":3001, "message":"Current PostgreSql User Password Could Not Be Update"}'
 	fi
 	;;
 
