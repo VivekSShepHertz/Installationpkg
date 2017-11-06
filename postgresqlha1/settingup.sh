@@ -52,7 +52,7 @@ if [ $? -eq 0 ]; then
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
 		sleep 60
-		sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
+		#sudo cp -arf /home/azureuser/Installationpkg/mysqlha1/app42RDS /.
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		sudo mkdir -p /etc/repmgr
 		/home/azureuser/Installationpkg/comman-postgresql/master_config poiuytrewq $2
