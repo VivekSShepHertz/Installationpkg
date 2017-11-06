@@ -13,7 +13,7 @@ sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home
 if [ $? -eq 0 ]; then
 yum install -y redis haproxy
 	sleep 60
-	sudo cp -arf /home/azureuser/Installationpkg/redis-proxyha1/app42RDS /.
+	sudo cp -arf /home/azureuser/Installationpkg/redisproxyha2/app42RDS /.
 	if [ $? -eq 0 ]; then
 		/home/azureuser/Installationpkg/comman/s_Config poiuytrewq
 		if [ $? -eq 0 ]; then
