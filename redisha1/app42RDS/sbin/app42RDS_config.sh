@@ -69,11 +69,16 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	sed -i s/"bind 127.0.0.1"/"bind 0.0.0.0"/g /etc/redis.conf
 	sed -i s/"dir \/var\/lib\/redis"/"dir \/var\/lib\/redis\/data"/g /etc/redis.conf
 	sed -i s/"logfile \/var\/log\/redis\/redis.log"/"logfile \/var\/lib\/redis\/logs\/redis.log"/g /etc/redis.conf
+	
+	ip=`ip \r|grep "proto kernel  scope link"|rev|awk '{print $1}'|rev`
 
 	echo "Setup Redis-Sentinel"
 	sed -i s/"logfile \/var\/log\/redis\/sentinel.log"/"logfile \/var\/lib\/redis\/logs\/sentinel.log"/g /etc/redis-sentinel.conf
 	sed -i s/"# bind 127.0.0.1 192.168.1.1"/"bind $ip"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel monitor mymaster 127.0.0.1 6379 2"/"sentinel monitor mymaster 10.20.1.7 6379 2"/g /etc/redis-sentinel.conf
+	sed -i s/"# bind 127.0.0.1 10.20.1.6"/"bind $ip"/g /etc/redis-sentinel.conf
+	sed -i s/"sentinel down-after-milliseconds mymaster 30000"/"sentinel down-after-milliseconds mymaster 20000"/g /etc/redis-sentinel.conf
+	sed -i s/"sentinel failover-timeout mymaster 180000"/"sentinel failover-timeout mymaster 30000"/g /etc/redis-sentinel.conf
 	sed -i s/'rh_status_q || exit'/'#'/g /etc/init.d/redis-sentinel
         sed -i s/'rh_status_q && exit'/'#'/g /etc/init.d/redis-sentinel
 

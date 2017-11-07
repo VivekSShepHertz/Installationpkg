@@ -26,7 +26,7 @@ sudo chmod 777 /etc /etc/yum.repos.d /etc/yum.repos.d/CentOS-Base.repo && sudo c
 #echo " Sleep 3 postgresqlha1"
 #sleep 10
 if [ $? -eq 0 ]; then
-sleep 60
+sleep 10
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mutt* /home/azureuser/Installationpkg/comman/rpms/utility/nc* /home/azureuser/Installationpkg/comman/rpms/utility/tokyocabinet* /home/azureuser/Installationpkg/comman/rpms/utility/urlview*  http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 if [ $? -eq 0 ]; then
 #sudo apt-get install -y linux-generic linux-headers-generic linux-image-generic
@@ -47,11 +47,11 @@ if [ $? -eq 0 ]; then
 	#sudo update-rc.d postgresql enable
 	#sudo systemctl enable postgresql
 	#sudo sed -i 's/enabled=0/enabled=1/g' /etc/yum.repos.d/pgdg-96-centos.repo && 
-	sleep 60
+	sleep 10
 	sudo yum install -y redis
 	#sudo chown -R root.root /app42RDS
 	if [ $? -eq 0 ]; then
-		sleep 60
+		sleep 10
 		sudo cp -arf /home/azureuser/Installationpkg/redisha1/app42RDS /.
 		#sudo ln -s /usr/pgsql-9.6/bin/* /usr/local/bin/
 		#sudo mkdir -p /etc/repmgr
