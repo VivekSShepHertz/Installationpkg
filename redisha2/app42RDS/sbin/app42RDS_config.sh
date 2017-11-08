@@ -35,7 +35,7 @@ create_lvm)
 	echo "net.core.somaxconn = 65535" >> /etc/sysctl.conf
 	echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
 	sysctl vm.overcommit_memory=1
-	sed -i '15 s/^/echo "never" > \/sys\/kernel\/mm\/transparent_hugepage\/enabled/' /etc/init.d/redis-sentinel
+	echo 'echo "never" > /sys/kernel/mm/transparent_hugepage/enabled' >> /etc/rc.local
 	echo "Set File Limits"
 	echo "root            soft    nofile          1000000
 root            hard    nofile          1000000
@@ -63,12 +63,14 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	echo "$lvpath /var/lib/redis ext4 defaults 1 2" >> /etc/fstab
 	mount -a
 	echo "Setup Redis Server"
-	sed -i s/'rh_status_q && exit'/'#'/g /etc/init.d/redis
-	sed -i s/'rh_status_q || exit'/'#'/g /etc/init.d/redis
+	conn="$2"
+	mem="$3"
 	cd /var/lib/redis && mkdir logs data && chmod 750 data/ logs/  && chown -R redis.redis /var/lib/redis
 	sed -i s/"bind 127.0.0.1"/"bind 0.0.0.0"/g /etc/redis.conf
 	sed -i s/"dir \/var\/lib\/redis"/"dir \/var\/lib\/redis\/data"/g /etc/redis.conf
 	sed -i s/"logfile \/var\/log\/redis\/redis.log"/"logfile \/var\/lib\/redis\/logs\/redis.log"/g /etc/redis.conf
+	sed -i s/"# maxclients 10000"/"maxclients $conn"/g /etc/redis.conf
+	sed -i s/"# maxmemory <bytes>"/"maxmemory ${mem}M"/g /etc/redis.conf
 	
 	ip=`ip \r|grep "proto kernel  scope link"|rev|awk '{print $1}'|rev`
 
@@ -78,8 +80,10 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	sed -i s/"sentinel monitor mymaster 127.0.0.1 6379 2"/"sentinel monitor mymaster 10.20.1.7 6379 2"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel down-after-milliseconds mymaster 30000"/"sentinel down-after-milliseconds mymaster 20000"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel failover-timeout mymaster 180000"/"sentinel failover-timeout mymaster 30000"/g /etc/redis-sentinel.conf
-	sed -i s/'rh_status_q || exit'/'#'/g /etc/init.d/redis-sentinel
-        sed -i s/'rh_status_q && exit'/'#'/g /etc/init.d/redis-sentinel
+	sed -i s/"# sentinel notification-script mymaster \/var\/redis\/notify.sh"/"sentinel notification-script mymaster \/app42RDS\/sbin\/redis-notify.sh"/g /etc/redis-sentinel.conf
+
+	/app42RDS/sbin/initredis
+	/app42RDS/sbin/initredissentinel
 
 	chkconfig redis on
 	chkconfig redis-sentinel on
@@ -88,15 +92,12 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	/etc/init.d/sshd restart
 	sleep 10 
 	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
-	echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_failover_agent" >> /etc/crontab
 	/etc/init.d/crond restart
         ;;
 
 conf_master)
-	db_name="$2"
-	user_name="$3"
-        user_password="$4"
-	passwd="$4"	
+        user_password="$2"
+	passwd="$2"	
 	sed -i s/"# requirepass foobared"/"requirepass $passwd"/g /etc/redis.conf
 	sed -i s/"# masterauth <master-password>"/"masterauth $passwd"/g /etc/redis.conf
 	sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $passwd"/g /etc/redis-sentinel.conf
@@ -105,10 +106,8 @@ conf_master)
         ;;
 
 conf_slave)
-	db_name="$2"
-        user_name="$3"
-        user_password="$4"
-	passwd="$4"
+        user_password="$2"
+	passwd="$2"
         sed -i s/"# requirepass foobared"/"requirepass $passwd"/g /etc/redis.conf
 	sed -i s/"# slaveof <masterip> <masterport>"/"slaveof 10.20.1.7 6379"/g /etc/redis.conf
 	sed -i s/"# masterauth <master-password>"/"masterauth $passwd"/g /etc/redis.conf

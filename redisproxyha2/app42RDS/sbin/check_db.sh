@@ -2,16 +2,29 @@
 
 Email="vivek.soni@shephertz.co.in, sintu.kumar@shephertz.co.in, nishant.sharma@shephertz.co.in"
 setup_name=`hostname|cut -d"-" -f1`
-#d=`netstat -npl|grep mysqld|grep 3306|rev|awk '{print $1}'|rev|cut -d"/" -f1`
-d=`netstat -tunpl|grep postgres|grep 5432|grep -v tcp6|rev|awk '{print $1}'|rev|cut -d"/" -f1`
-/bin/echo "d=$d"
-if [ -z $d ]; then
-/etc/init.d/postgresql restart
+ip=`ip \r|grep "proto kernel  scope link  src"|rev|awk '{print $1}'|rev`
+
+sentinel=`ps ax |grep redis-sentinel|grep -v grep|awk '{print $1}'`
+if [ -z $sentinel ]; then
+/etc/init.d/redis-sentinel restart
 if [ $? -eq 0 ]; then
-        mail -s "$setup_name : PostgreSQL Service Running Successfully : PostgreSQLHA2" $Email < /var/log/postgresql/postgresql-9.6-main.log
+        mail -s "$setup_name : Redis-Sentinel Service Running Successfully : $ip" $Email < /var/log/redis/sentinel.log
 else
-        mail -s "$setup_name : PostgreSQL Service Starting Failed : PostgreSQLHA2" $Email < /var/log/postgresql/postgresql-9.6-main.log
+        mail -s "$setup_name : Redis-Sentinel Service Starting Failed : $ip" $Email < /var/log/redis/sentinel.log
 fi
 else
-/bin/echo "Process $1 Is Running"
+/bin/echo "Process Redis-Sentinel Is Running"
 fi
+
+haproxy=`ps ax |grep proxy|grep -v grep|awk '{print $1}'`
+if [ -z $haproxy ]; then
+/etc/init.d/haproxy restart > /tmp/haproxy 2>&1
+if [ $? -eq 0 ]; then
+        mail -s "$setup_name : HAProxy Service Running Successfully : $ip" $Email < /tmp/haproxy
+else
+        mail -s "$setup_name : HAProxy Service Starting Failed : $ip" $Email < /tmp/haproxy
+fi
+else
+/bin/echo "Process HAProxy Is Running"
+fi
+

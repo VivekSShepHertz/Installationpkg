@@ -35,7 +35,7 @@ conf_proxy)
 	echo "net.core.somaxconn = 65535" >> /etc/sysctl.conf
 	echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
 	sysctl vm.overcommit_memory=1
-	sed -i '15 s/^/echo "never" > \/sys\/kernel\/mm\/transparent_hugepage\/enabled/' /etc/init.d/redis-sentinel
+	echo 'echo "never" > /sys/kernel/mm/transparent_hugepage/enabled' >> /etc/rc.local
 	echo "Set File Limits"
 	echo "root            soft    nofile          1000000
 root            hard    nofile          1000000
@@ -49,10 +49,8 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	echo "Set Gurb Entry"
 	sudo sed -i s/"rd_NO_DM"/"rd_NO_DM disable_mtrr_trim"/g /boot/grub/grub.conf
 	
-	db_name="$2"
-        user_name="$3"
-        user_password="$4"
-	passwd="$4"
+        user_password="$2"
+	passwd="$2"
 	
 	pkill -9 redis
 	
@@ -65,8 +63,7 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $passwd"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel down-after-milliseconds mymaster 30000"/"sentinel down-after-milliseconds mymaster 20000"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel failover-timeout mymaster 180000"/"sentinel failover-timeout mymaster 30000"/g /etc/redis-sentinel.conf
-	sed -i s/'rh_status_q || exit'/'#'/g /etc/init.d/redis-sentinel
-        sed -i s/'rh_status_q && exit'/'#'/g /etc/init.d/redis-sentinel
+	sed -i s/"# sentinel notification-script mymaster \/var\/redis\/notify.sh"/"sentinel notification-script mymaster \/app42RDS\/sbin\/redis-notify.sh"/g /etc/redis-sentinel.conf
 	
 	echo "Setup HAProxy Server"
 	echo "# Specifies TCP timeout on connect for use by the frontend ft_redis
@@ -102,12 +99,14 @@ server redis2 10.20.1.8:6379 check inter 1s" > /etc/haproxy/haproxy.cfg
 
 	chkconfig redis-sentinel on
 	chkconfig  haproxy on
+	
+	echo 1 > /etc/init.d/redis
+        /app42RDS/sbin/initredissentinel
 
 	/app42RDS/sbin/ConfigConstructer
 	/etc/init.d/sshd restart
 	sleep 10 
 	echo "#*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
-	echo "#*/2     *       *       *       *       root    /app42RDS/sbin/check_failover_agent" >> /etc/crontab
 	/etc/init.d/crond restart
 	/etc/init.d/redis-sentinel start
 	/etc/init.d/haproxy start
