@@ -76,7 +76,6 @@ redis        hard    nofile          1000000" >> /etc/security/limits.conf
 	sed -i s/"logfile \/var\/log\/redis\/sentinel.log"/"logfile \/var\/lib\/redis\/logs\/sentinel.log"/g /etc/redis-sentinel.conf
 	sed -i s/"# bind 127.0.0.1 192.168.1.1"/"bind $ip"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel monitor mymaster 127.0.0.1 6379 2"/"sentinel monitor mymaster 10.20.1.7 6379 2"/g /etc/redis-sentinel.conf
-	sed -i s/"# bind 127.0.0.1 10.20.1.6"/"bind $ip"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel down-after-milliseconds mymaster 30000"/"sentinel down-after-milliseconds mymaster 20000"/g /etc/redis-sentinel.conf
 	sed -i s/"sentinel failover-timeout mymaster 180000"/"sentinel failover-timeout mymaster 30000"/g /etc/redis-sentinel.conf
 	sed -i s/'rh_status_q || exit'/'#'/g /etc/init.d/redis-sentinel
@@ -97,9 +96,10 @@ conf_master)
 	db_name="$2"
 	user_name="$3"
         user_password="$4"
-	sed -i s/"# requirepass foobared"/"requirepass $user_password"/g /etc/redis.conf
-	sed -i s/"# masterauth <master-password>"/"masterauth $user_password"/g /etc/redis.conf
-	sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $user_password"/g /etc/redis-sentinel.conf
+	passwd="$4"	
+	sed -i s/"# requirepass foobared"/"requirepass $passwd"/g /etc/redis.conf
+	sed -i s/"# masterauth <master-password>"/"masterauth $passwd"/g /etc/redis.conf
+	sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $passwd"/g /etc/redis-sentinel.conf
 	/etc/init.d/redis-sentinel start
 	/etc/init.d/redis start
         ;;
@@ -108,10 +108,11 @@ conf_slave)
 	db_name="$2"
         user_name="$3"
         user_password="$4"
-	sed -i s/"# requirepass foobared"/"requirepass $user_password"/g /etc/redis.conf
+	passwd="$4"
+        sed -i s/"# requirepass foobared"/"requirepass $passwd"/g /etc/redis.conf
 	sed -i s/"# slaveof <masterip> <masterport>"/"slaveof 10.20.1.7 6379"/g /etc/redis.conf
-	sed -i s/"# masterauth <master-password>"/"masterauth $user_password"/g /etc/redis.conf
-	sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $user_password"/g /etc/redis-sentinel.conf
+	sed -i s/"# masterauth <master-password>"/"masterauth $passwd"/g /etc/redis.conf
+        sed -i s/"# sentinel auth-pass <master-name> <password>"/"sentinel auth-pass mymaster $passwd"/g /etc/redis-sentinel.conf
 	/etc/init.d/redis-sentinel start
         /etc/init.d/redis start
         ;;
