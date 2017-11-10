@@ -69,7 +69,7 @@ mongod     soft    nproc     600000" >> /etc/security/limits.conf
 
 	sed -i s/"ulimit -u 64000"/"ulimit -u 640000"/g /etc/init.d/mongod
 	
-	/home/azureuser/Installationpkg/mongoha2/app42RDS/sbin/myconf qwertyuiop
+	/home/azureuser/Installationpkg/mongoha2/app42RDS/sbin/myconf qwertyuiop $2
 	cp /home/azureuser/Installationpkg/mongoha2/app42RDS/sbin/mongod.conf /etc/mongod.conf
 	
 	/app42RDS/sbin/ConfigConstructer
@@ -112,6 +112,7 @@ add_auth)
         ssh -i /root/.ssh/id_rsa root@10.20.1.6 /etc/init.d/iptables save
 
 conf_slave)
+	/etc/init.d/mongod restart
         ;;
 
 esac

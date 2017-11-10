@@ -33,7 +33,7 @@ processManagement:
 net:
   port: 37017
   bindIp: 0.0.0.0  # Listen to local interface only, comment to listen on all interfaces.
-  maxIncomingConnections: 2500
+  maxIncomingConnections: $2
 
   http:
     enabled: true

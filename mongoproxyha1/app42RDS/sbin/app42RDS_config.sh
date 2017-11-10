@@ -57,7 +57,7 @@ mongod     soft    nproc     600000" >> /etc/security/limits.conf
 
 	sed -i s/"ulimit -u 64000"/"ulimit -u 640000"/g /etc/init.d/mongod
 	
-	/home/azureuser/Installationpkg/mongoproxyha1/app42RDS/sbin/myconf qwertyuiop
+	/home/azureuser/Installationpkg/mongoproxyha1/app42RDS/sbin/myconf qwertyuiop $2
 	cp /home/azureuser/Installationpkg/mongoproxyha1/app42RDS/sbin/mongod.conf /etc/mongod.conf
 	
 	/app42RDS/sbin/ConfigConstructer
@@ -67,5 +67,9 @@ mongod     soft    nproc     600000" >> /etc/security/limits.conf
 	/etc/init.d/crond restart
 	/etc/init.d/mongod restart
         ;;
+
+conf_slave)
+	/etc/init.d/mongod restart
+	;;
 
 esac
