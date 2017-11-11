@@ -66,7 +66,7 @@ get.system.memory)
         echo '{"code":5000,"success":"true","message":"Current System Memory Usages","Memory":"'$mem_percent'"}'
         ;;
 
-get.redis.connection)
+get.mongo.connection)
                 d=`ps ax |grep mongod|grep -v grep |grep -v dhclient|awk '{print $1}'`
                 /bin/echo "d=$d"
                 if [ ! -z $d ]; then
@@ -86,7 +86,7 @@ get.system.load)
         ;;
 
 
-get.redis.max.connection)
+get.mongo.max.connection)
                 d=`ps ax |grep mongod|grep -v grep |grep -v dhclient|awk '{print $1}'`
                 /bin/echo "d=$d"
                 if [ ! -z $d ]; then
