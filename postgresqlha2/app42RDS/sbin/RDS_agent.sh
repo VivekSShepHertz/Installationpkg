@@ -290,7 +290,7 @@ reset.password)
 	username=$2
         old_password=$3
         new_password=$4
-	su -c 'echo "ALTER USER '$username' WITH PASSWORD '"'$new_password'"';"|/usr/bin/psql' postgres
+	su -c 'echo "ALTER USER '$username' WITH PASSWORD '"'$new_password'"';"|/usr/bin/psql' postgres > /tmp/reset_pwd
 	alt=`cat /tmp/reset_pwd`
         if [ "$alt" == "ALTER ROLE" ]; then
 		echo '{"code":5000,"success":"true","message":"PostgreSql User Password Update Successfully"}'
