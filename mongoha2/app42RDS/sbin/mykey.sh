@@ -17,10 +17,9 @@ DlJojZPCW1Swl8mG7FZcG1SCA06ZHvbfLd93Kc+fA2XeoSick0koXNyPVYAeeCOJ
 q9mrI6i6wj7uxl0b8tEVXO/Z+CD5yk9a2A+Dkx4KmCph5a/2M0xsNbYaj0b0Py/C
 vLw34aQHrPImQ/Ukk20/3JI7djT5M/5AQMRkVYfyzZ+i9rUDDutxz1ipuiTO1LBr
 T1ZBN7eKUIl033yW4CO/6pHJttt3E9i1mDsB+SSZBBlgTvR/dmYgpx9YCGAR1DL5
-ycEqmPvDTyfz/JTpvvHX6EZ7cpNN" > mongodb-keyfile
+ycEqmPvDTyfz/JTpvvHX6EZ7cpNN" > /home/azureuser/Installationpkg/mongoha2/app42RDS/sbin/mongodb-keyfile
 
 else
         echo "You are not authourize person, Please leave now."
         exit
 fi
-

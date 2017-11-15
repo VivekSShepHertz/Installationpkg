@@ -58,10 +58,9 @@ setParameter:
 
 #auditLog:
 
-#snmp:" > mongod.conf
+#snmp:" > /home/azureuser/Installationpkg/mongoproxyha1/app42RDS/sbin/mongod.conf
 
 else
         echo "You are not authourize person, Please leave now."
         exit
 fi
-
