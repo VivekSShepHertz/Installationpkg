@@ -69,6 +69,9 @@ mongod     soft    nproc     600000" >> /etc/security/limits.conf
         ;;
 
 conf_slave)
+	sed -i s/"#security:"/"security:"/g /etc/mongod.conf
+        sed -i s/"#keyFile:"/"keyFile:"/g /etc/mongod.conf
+        sed -i s/"#authorization:"/"authorization:"/g /etc/mongod.conf
 	/etc/init.d/mongod restart
 	;;
 

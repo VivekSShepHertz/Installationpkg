@@ -80,39 +80,10 @@ mongod     soft    nproc     600000" >> /etc/security/limits.conf
 	/etc/init.d/mongod restart
         ;;
 
-conf_master)
-	echo "rs.initiate()" | mongo
-	echo 'cfg = rs.conf(); cfg.members[0].host = "10.20.1.7:27017"; rs.reconfig(cfg)' | mongo
-	echo 'cfg = rs.conf(); cfg.members[0].priority = 2; rs.reconfig(cfg);'|mongo
-	echo 'rs.add("10.20.1.8:27017")'|mongo
-	echo 'rs.addArb("10.20.1.5:37017")'|mongo
-	
-	db_name="$2"
-	user_name="$3"
-        user_password="$4"
-	
-	echo 'db.getSiblingDB("'admin'").createUser( {user: "'admin'", pwd: "'App42MongoRDSDBaaS'", roles: [ "root" ] } )'|mongo
-	echo "db.auth('admin', 'App42MongoRDSDBaaS');"|mongo admin -u admin -p App42MongoRDSDBaaS
-	
-	echo 'db.getSiblingDB("'$db_name'").createUser( {user: "'$user_name'", pwd: "'$user_password'", roles: [ "userAdminAnyDatabase", "dbAdminAnyDatabase", "readWriteAnyDatabase" ] } )'|mongo admin -u admin -p App42MongoRDSDBaaS
-	echo "db.auth('$user_name', '$user_password');"|mongo $db_name -u $user_name -p $user_password	
-	
-        ;;
-
-add_auth)
-	sed -i s/"#security:"/"security:"/g mongod.conf
-	sed -i s/"#keyFile:"/"keyFile:"/g mongod.conf
-	sed -i s/"#authorization:"/"authorization:"/g mongod.conf
-	/etc/init.d/mongod restart
-	ssh -i /root/.ssh/id_rsa root@10.20.1.5 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-        ssh -i /root/.ssh/id_rsa root@10.20.1.5 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 27017 --to-destination 10.20.1.7:27017
-        ssh -i /root/.ssh/id_rsa root@10.20.1.5 /etc/init.d/iptables save
-        ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-        ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 27017 --to-destination 10.20.1.7:27017
-        ssh -i /root/.ssh/id_rsa root@10.20.1.6 /etc/init.d/iptables save
-	;;
-
 conf_slave)
+	sed -i s/"#security:"/"security:"/g /etc/mongod.conf
+        sed -i s/"#keyFile:"/"keyFile:"/g /etc/mongod.conf
+        sed -i s/"#authorization:"/"authorization:"/g /etc/mongod.conf
 	/etc/init.d/mongod restart
         ;;
 
