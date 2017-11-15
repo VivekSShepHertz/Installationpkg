@@ -110,6 +110,7 @@ add_auth)
         ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
         ssh -i /root/.ssh/id_rsa root@10.20.1.6 iptables -t nat -I PREROUTING -s 0.0.0.0/0 -p tcp -j DNAT --dport 27017 --to-destination 10.20.1.7:27017
         ssh -i /root/.ssh/id_rsa root@10.20.1.6 /etc/init.d/iptables save
+	;;
 
 conf_slave)
 	/etc/init.d/mongod restart
