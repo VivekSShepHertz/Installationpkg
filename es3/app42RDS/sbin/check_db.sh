@@ -9,11 +9,11 @@ elasticsearch_server=`ps ax |grep java|grep elasticsearch|grep -v grep|awk '{pri
 if [ -z $elasticsearch_server ]; then
 /etc/init.d/elasticsearch restart
 if [ $? -eq 0 ]; then
-        mail -s "$setup_name : Elasticsearch VM1 Service Running Successfully : $ip" $Email < /var/lib/elasticsearch/logs/${cluster}.log
+        mail -s "$setup_name : Elasticsearch VM3 Service Running Successfully : $ip" $Email < /var/lib/elasticsearch/logs/${cluster}.log
 else
-        mail -s "$setup_name : Elasticsearch VM1 Service Starting Failed : $ip" $Email < /var/lib/elasticsearch/logs/${cluster}.log
+        mail -s "$setup_name : Elasticsearch VM3 Service Starting Failed : $ip" $Email < /var/lib/elasticsearch/logs/${cluster}.log
 fi
 else
-/bin/echo "Process Elasticsearch VM1 Server  Is Running"
+/bin/echo "Process Elasticsearch VM3 Server  Is Running"
 fi
 
