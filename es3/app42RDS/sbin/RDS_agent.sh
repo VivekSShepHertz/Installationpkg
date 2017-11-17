@@ -49,9 +49,9 @@ get.es.info)
                                 fi
                         fi
                         rm -rf /tmp/err /tmp/err1
-                        echo '{"code":5000,"success":"true","message":"Current Redis VM Info", "CPU":"'$used_cpu'", "Memory":"'$mem_percent'", "Load Avg":"'$load'", "Threads Connected":"'$conn'", "Max Connection":"'$max_conn'", "Used Data Disk":"'$disk_MB'"}'
+                        echo '{"code":5000,"success":"true","message":"Current Elasticsearch VM Info", "CPU":"'$used_cpu'", "Memory":"'$mem_percent'", "Load Avg":"'$load'", "Threads Connected":"'$conn'", "Max Connection":"'$max_conn'", "Used Data Disk":"'$disk_MB'"}'
                 else
-                        echo '{"success":"false","code":3001, "message":"Current Redis VM Info Could Not Be Fetch, Due To Redis Not Running"}'
+                        echo '{"success":"false","code":3001, "message":"Current Elasticsearch VM Info Could Not Be Fetch, Due To Elasticsearch Not Running"}'
                 fi
         ;;
 
@@ -84,9 +84,9 @@ get.es.connection)
                                 fi
                         fi
                         rm -rf /tmp/err
-                        echo '{"code":5000,"success":"true","message":"Current Redis Threads Connected","Threads Connected":"'$conn'"}'
+                        echo '{"code":5000,"success":"true","message":"Current Elasticsearch Threads Connected","Threads Connected":"'$conn'"}'
                 else
-                        echo '{"success":"false","code":3001, "message":"Current Redis Threads Connected Could Not Be Fetch, Due To Redis Not Running"}'
+                        echo '{"success":"false","code":3001, "message":"Current Elasticsearch Threads Connected Could Not Be Fetch, Due To Elasticsearch Not Running"}'
                 fi
         ;;
 
@@ -104,9 +104,9 @@ get.es.max.connection)
 
                         esconn=`curl -u elastic:App42ElasticRDS http://localhost:9200/_nodes/thread_pool\?pretty|/app42RDS/sbin/jq-linux64 '.nodes.'$nodekey'.thread_pool.index.queue_size'`
                         max_conn=`echo "$esconn * 4"|bc`
-                        echo '{"code":5000,"success":"true","message":"Current Max Connection Set on Redis","Max Connection":"'$max_conn'"}'
+                        echo '{"code":5000,"success":"true","message":"Current Max Connection Set on Elasticsearch","Max Connection":"'$max_conn'"}'
                 else
-                        echo '{"success":"false","code":3001, "message":"Current Max Connection Set on Redis Could Not Be Fetch, Due To Redis Not Running"}'
+                        echo '{"success":"false","code":3001, "message":"Current Max Connection Set on Elasticsearch Could Not Be Fetch, Due To Elasticsearch Not Running"}'
                 fi
         ;;
 
@@ -132,9 +132,9 @@ sed -i s/'queue_size: 500'/'queue_size: 2500'/g /etc/elasticsearch/elasticsearch
                 ssh -i /root/.ssh/id_rsa root@10.20.1.5 /etc/init.d/elasticsearch restart
                 sleep 30
                 ssh -i /root/.ssh/id_rsa root@10.20.1.8 /etc/init.d/elasticsearch restart
-                echo '{"code":5000,"success":"true","message":"Redis Max Connection Update Successfully","New Max Connection":"'$3'"}'
+                echo '{"code":5000,"success":"true","message":"Elasticsearch Max Connection Update Successfully","New Max Connection":"'$3'"}'
         else
-                echo '{"success":"false","code":3001, "message":"Redis Max Connection Updation Failed"}'
+                echo '{"success":"false","code":3001, "message":"Elasticsearch Max Connection Updation Failed"}'
         fi
         ;;
 
@@ -145,9 +145,9 @@ update.user.password)
         curl -XPOST -u elastic:App42ElasticRDS 'localhost:9200/_xpack/security/user/'$username'/_password' -H "Content-Type: application/json" -d '{ "password" : "'$newpassword'" }'
 
         if [ $? -eq 0 ]; then
-                echo '{"code":5000,"success":"true","message":"Redis Password Update Successfully"}'
+                echo '{"code":5000,"success":"true","message":"Elasticsearch Password Update Successfully"}'
         else
-                echo '{"success":"false","code":3001, "message":"Current Redis Password Could Not Be Update"}'
+                echo '{"success":"false","code":3001, "message":"Current Elasticsearch Password Could Not Be Update"}'
         fi
         ;;
 
