@@ -12,7 +12,7 @@ sleep 10
 sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/core/bash* /home/azureuser/Installationpkg/comman/rpms/utility/fsarchiver* /home/azureuser/Installationpkg/comman/rpms/utility/mutt* /home/azureuser/Installationpkg/comman/rpms/utility/nc* /home/azureuser/Installationpkg/comman/rpms/utility/tokyocabinet* /home/azureuser/Installationpkg/comman/rpms/utility/urlview* https://s3-ap-southeast-1.amazonaws.com/app42packege/jdk-8u144-linux-x64.rpm
 if [ $? -eq 0 ]; then
 	sleep 10
-	sudo yum install -y elasticsearch
+	sudo yum install -y /home/azureuser/Installationpkg/comman/rpms/utility/elasticsearch-5.6.4.rpm
 	if [ $? -eq 0 ]; then
 		sleep 10
 		sudo cp -arf /home/azureuser/Installationpkg/es4/app42RDS /.

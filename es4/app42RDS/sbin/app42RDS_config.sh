@@ -69,11 +69,11 @@ elasticsearch   soft    nproc     600000" >> /etc/security/limits.conf
 	/app42RDS/sbin/myconf qwertyuiop $conn
 	cp /app42RDS/sbin/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml && chown root.elasticsearch /etc/elasticsearch/elasticsearch.yml
 	
-	/usr/share/elasticsearch/bin/elasticsearch-plugin install x-pack << EOF
+	cd /opt && wget https://s3-ap-southeast-1.amazonaws.com/app42packege/x-pack-5.6.4.zip
+        /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///opt/x-pack-5.6.4.zip << EOF
 y
 y
 EOF
-	
 	chkconfig elasticsearch on
 
 	/app42RDS/sbin/ConfigConstructer
