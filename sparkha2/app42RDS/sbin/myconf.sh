@@ -77,7 +77,7 @@ echo "#!/usr/bin/env bash
 ### === IMPORTANT ===
 ### Change the following to specify a real cluster's Master host
 ###
-export STANDALONE_SPARK_MASTER_HOST=$2
+export STANDALONE_SPARK_MASTER_HOST=10.20.1.7
 
 export SPARK_MASTER_IP=\$STANDALONE_SPARK_MASTER_HOST
 

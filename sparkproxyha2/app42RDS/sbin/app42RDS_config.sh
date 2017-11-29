@@ -59,6 +59,8 @@ haproxy     soft    nproc     600000" >> /etc/security/limits.conf
 	sleep 10 
 	#echo "*/2     *       *       *       *       root    /app42RDS/sbin/check_db" >> /etc/crontab
 	#/etc/init.d/crond restart
+	/etc/init.d/zookeeper-server init
+	echo 2 > /var/lib/zookeeper/myid
 	/etc/init.d/zookeeper-server start
 	/etc/init.d/haproxy start
 	
